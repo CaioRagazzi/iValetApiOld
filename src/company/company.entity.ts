@@ -13,7 +13,7 @@ export class Company {
     name: string;
 
     @IsNotEmpty()
-    @IsInt()
+    @IsInt() 
     @ManyToOne(type => User, user => user.company)
     user: User;
 }
