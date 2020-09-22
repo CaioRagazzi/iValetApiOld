@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { User } from 'src/user/user.entity';
 import { UserService } from './user.service';
 
