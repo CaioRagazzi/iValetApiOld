@@ -31,7 +31,7 @@ export class UserController {
         }
     }
 
-    // @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard('jwt'))
     @Put(':userId')
     async Update(@Body() user: UserUpdateDto, @Param('userId') id: number): Promise<UpdateResult> {        
         try {
