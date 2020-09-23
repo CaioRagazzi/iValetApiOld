@@ -18,6 +18,10 @@ export class UserService {
         return this.userRepository.findOne({ where: { id: id } })
     }
 
+    async findAll(): Promise<User[]>{
+        return this.userRepository.find();
+    }
+
     async create(user: User): Promise<User> {
         user.password = this.hashPassword(user.password);
         return this.userRepository.save(user);
