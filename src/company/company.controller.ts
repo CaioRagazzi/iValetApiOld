@@ -12,9 +12,10 @@ export class CompanyController {
     @Post()
     async create(@Body() company: CompanyInsertDto): Promise<InsertResult> {
         try {
-            const newCompany = this.companyService.create(company);
+            const newCompany = await this.companyService.create(company);
             return newCompany;
         } catch (error) {
+            console.log(error);
             throw new HttpException(error.sqlMessage, HttpStatus.BAD_REQUEST);
         }
     }

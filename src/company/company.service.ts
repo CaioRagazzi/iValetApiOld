@@ -12,18 +12,13 @@ export class CompanyService {
         private userService: UserService
     ) { }
 
-    async create(company: CompanyInsertDto): Promise<InsertResult>{
+    async create(company: CompanyInsertDto): Promise<InsertResult> {
         const user = await this.userService.findOneById(company.user);
 
         const companyInst = new Company();
         companyInst.name = company.name;
         companyInst.user = user;
 
-        try {
-            return await this.companyRepository.insert(companyInst);
-        } catch (error) {
-            return error
-        }
-
+        return this.companyRepository.insert(companyInst);
     }
 }
