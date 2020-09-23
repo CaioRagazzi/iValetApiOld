@@ -3,6 +3,7 @@ import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
 import { genSaltSync, hashSync, compareSync } from "bcryptjs";
 import { UserUpdateDto } from './dto/update-user.dto';
+import { UserInsertDto } from './dto/insert-user.dto';
 
 @Injectable()
 export class UserService {
@@ -23,9 +24,13 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    async create(user: User): Promise<InsertResult> {
-        user.password = this.hashPassword(user.password);
-        return this.userRepository.insert(user);
+    async create(user: UserInsertDto): Promise<InsertResult> {
+        const userInst = new User();
+        userInst.email = user.email;
+        userInst.name = user.name;
+        userInst.password = this.hashPassword(user.password);
+
+        return this.userRepository.insert(userInst);
     }
 
     async update(userId: number, user: UserUpdateDto): Promise<UpdateResult> {
