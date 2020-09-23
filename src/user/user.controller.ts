@@ -1,4 +1,5 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/user.entity';
 import { UserService } from './user.service';
 
@@ -16,6 +17,7 @@ export class UserController {
         }
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Get()
     async Get(): Promise<User[]> {
         try {
