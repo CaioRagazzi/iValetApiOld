@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/user.entity';
-import { UpdateResult } from 'typeorm';
+import { InsertResult, UpdateResult } from 'typeorm';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
@@ -10,7 +10,7 @@ export class UserController {
     constructor(private userService: UserService) { }
 
     @Post()
-    async create(@Body() user: User): Promise<User> {
+    async create(@Body() user: User): Promise<InsertResult> {
         try {
             const userRet = await this.userService.create(user);
             return userRet;

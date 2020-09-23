@@ -1,4 +1,5 @@
 import { Body, Controller, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { InsertResult } from 'typeorm';
 import { Company } from './company.entity';
 import { CompanyService } from './company.service';
 
@@ -9,7 +10,7 @@ export class CompanyController {
     ) { }
 
     @Post()
-    async create(@Body() company: Company): Promise<Company> {
+    async create(@Body() company: Company): Promise<InsertResult> {
         try {
             const newCompany = this.companyService.create(company);
             return newCompany;

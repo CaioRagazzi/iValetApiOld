@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Repository, UpdateResult } from 'typeorm';
+import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
 import { genSaltSync, hashSync, compareSync } from "bcryptjs";
 import { UserUpdateDto } from './dto/update-user.dto';
@@ -23,9 +23,9 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    async create(user: User): Promise<User> {
+    async create(user: User): Promise<InsertResult> {
         user.password = this.hashPassword(user.password);
-        return this.userRepository.save(user);
+        return this.userRepository.insert(user);
     }
 
     async update(userId: number, user: UserUpdateDto): Promise<UpdateResult> {
