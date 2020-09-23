@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { InsertResult, Repository } from 'typeorm';
 import { Company } from './company.entity';
+import { CompanyInsertDto } from './dto/insert-company.dto';
 
 @Injectable()
 export class CompanyService {
@@ -11,7 +12,18 @@ export class CompanyService {
         private userService: UserService
     ) { }
 
-    async create(company: Company): Promise<InsertResult>{
-        return this.companyRepository.insert(company);
+    async create(company: CompanyInsertDto): Promise<InsertResult>{
+        const user = await this.userService.findOneById(company.user);
+
+        const companyInst = new Company();
+        companyInst.name = company.name;
+        companyInst.user = user;
+
+        try {
+            return await this.companyRepository.insert(companyInst);
+        } catch (error) {
+            return error
+        }
+
     }
 }

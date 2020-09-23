@@ -1,7 +1,7 @@
-import { Body, Controller, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { InsertResult } from 'typeorm';
-import { Company } from './company.entity';
 import { CompanyService } from './company.service';
+import { CompanyInsertDto } from './dto/insert-company.dto';
 
 @Controller('company')
 export class CompanyController {
@@ -10,7 +10,7 @@ export class CompanyController {
     ) { }
 
     @Post()
-    async create(@Body() company: Company): Promise<InsertResult> {
+    async create(@Body() company: CompanyInsertDto): Promise<InsertResult> {
         try {
             const newCompany = this.companyService.create(company);
             return newCompany;
