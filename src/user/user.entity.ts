@@ -28,7 +28,6 @@ export class User {
   @Index({ unique: true })
   email: string;
 
-  @ApiProperty()
   @OneToMany(type => Company, company => company.user)
   company: Company[]
 }

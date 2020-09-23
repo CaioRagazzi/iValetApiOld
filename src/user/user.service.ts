@@ -1,7 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
 import { genSaltSync, hashSync, compareSync } from "bcryptjs";
+import { UserUpdateDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -18,13 +19,23 @@ export class UserService {
         return this.userRepository.findOne({ where: { id: id } })
     }
 
-    async findAll(): Promise<User[]>{
+    async findAll(): Promise<User[]> {
         return this.userRepository.find();
     }
 
     async create(user: User): Promise<User> {
         user.password = this.hashPassword(user.password);
         return this.userRepository.save(user);
+    }
+
+    async update(userId: number, user: UserUpdateDto): Promise<UpdateResult> {
+        const userInst = new User();
+        userInst.id = userId;
+        userInst.email = user.email;
+        userInst.name = user.name;
+
+        const updatedUser = this.userRepository.update(userId, userInst)
+        return updatedUser;
     }
 
     private hashPassword(password: string): string {
