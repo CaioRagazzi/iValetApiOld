@@ -75,12 +75,11 @@ export class UserController {
   @Post('SendEmailForgotPassword')
   async sendEmailForgotPassword(
     @Body() message: SendEmailForgotPasswordDto,
-    @Query('userId') userId: number,
   ): Promise<void> {
     try {
-      const userRet = await this.userService.findOneById(userId);
+      const userRet = await this.userService.findOneByEmail(message.to);
       if (userRet) {
-        this.userService.sendEmailForgotPassword(message.to, userId);
+        this.userService.sendEmailForgotPassword(message.to, userRet.id);
       } else {
         throw new HttpException('Error sending email', HttpStatus.BAD_REQUEST);
       }
