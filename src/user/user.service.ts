@@ -72,7 +72,7 @@ export class UserService {
     return updatedUser;
   }
 
-  async sendEmailForgotPassword(to: string, userId: number): void {
+  async sendEmailForgotPassword(to: string, userId: number): Promise<void> {
     const currentDate = new Date();
     const year = getYear(currentDate);
     const month = getMonth(currentDate);
