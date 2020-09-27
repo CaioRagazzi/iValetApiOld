@@ -5,7 +5,7 @@ import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserInsertDto } from './dto/insert-user.dto';
 import { SendEmailService } from 'src/senEmail/sendEmail.service';
-import Mail from 'nodemailer/lib/mailer';
+import { AES, enc } from 'crypto-js';
 
 @Injectable()
 export class UserService {
@@ -46,12 +46,27 @@ export class UserService {
     return updatedUser;
   }
 
-  sendEmailForgotPassword(
-    to: string,
-    subject: string,
-    text: string,
-  ): void {
-    this.sendEmailService.sendEmail(to, subject, text);
+  async updatePassword(hash: string, password: string): Promise<UpdateResult> {
+    const idDecrypted = AES.decrypt(hash, process.env.SECRET_CRYPTO);
+    const userId = idDecrypted.toString(enc.Utf8);
+    
+    const userRet = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    userRet.password = password;
+
+    const updatedUser = this.userRepository.update(
+      userId,
+      userRet,
+    );
+    return updatedUser;
+  }
+
+  sendEmailForgotPassword(to: string, userId: number): void {
+    const text = AES.encrypt(userId.toString(), process.env.SECRET_CRYPTO);
+    const subject = 'Forgot password';
+
+    this.sendEmailService.sendEmail(to, subject, text.toString());
   }
 
   private hashPassword(password: string): string {

@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { SendEmailDto } from 'src/senEmail/dto/send-email.dto';
+import { SendEmailForgotPasswordDto } from 'src/senEmail/dto/send-email-forgot-password.dto';
 import { User } from 'src/user/user.entity';
 import { InsertResult, UpdateResult } from 'typeorm';
 import { UserInsertDto } from './dto/insert-user.dto';
@@ -57,19 +57,30 @@ export class UserController {
     }
   }
 
+  @Put('update-password/me')
+  async UpdatePassword(
+    @Query('hash') hash: string,
+    @Query('password') password: string,
+  ): Promise<UpdateResult> {    
+    try {
+      console.log('oi');
+      
+      const userRet = await this.userService.updatePassword(hash, password);
+      return userRet;
+    } catch (error) {
+      throw new HttpException(error.sqlMessage, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Post('SendEmailForgotPassword')
   async sendEmailForgotPassword(
-    @Body() message: SendEmailDto,
-    @Query('userId') id: number,
+    @Body() message: SendEmailForgotPasswordDto,
+    @Query('userId') userId: number,
   ): Promise<void> {
     try {
-      const userRet = await this.userService.findOneById(id);
+      const userRet = await this.userService.findOneById(userId);
       if (userRet) {
-        this.userService.sendEmailForgotPassword(
-          message.to,
-          message.subject,
-          message.text,
-        );
+        this.userService.sendEmailForgotPassword(message.to, userId);
       } else {
         throw new HttpException('Error sending email', HttpStatus.BAD_REQUEST);
       }
