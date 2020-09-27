@@ -28,6 +28,7 @@ export class SendEmailService {
     this.options.to = to;
     this.options.subject = subject;
     this.options.text = text;
+    this.options.html = text;
 
     this.transporter.sendMail(this.options);
   }
