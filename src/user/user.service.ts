@@ -53,7 +53,7 @@ export class UserService {
     const userRet = await this.userRepository.findOne({
       where: { id: userId },
     });
-    userRet.password = password;
+    userRet.password = this.hashPassword(password);
 
     const updatedUser = this.userRepository.update(
       userId,
