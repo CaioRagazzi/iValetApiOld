@@ -6,6 +6,7 @@ import { UserUpdateDto } from './dto/update-user.dto';
 import { UserInsertDto } from './dto/insert-user.dto';
 import { SendEmailService } from 'src/senEmail/sendEmail.service';
 import { AES, enc } from 'crypto-js';
+import { getYear, getMonth, getDay, getHours, getMinutes } from 'date-fns';
 
 @Injectable()
 export class UserService {
@@ -48,22 +49,29 @@ export class UserService {
 
   async updatePassword(hash: string, password: string): Promise<UpdateResult> {
     const idDecrypted = AES.decrypt(hash, process.env.SECRET_CRYPTO);
-    const userId = idDecrypted.toString(enc.Utf8);
-    
+    const decryptedMessage = idDecrypted.toString(enc.Utf8);
+    const arr = decryptedMessage.split('|');
+
     const userRet = await this.userRepository.findOne({
-      where: { id: userId },
+      where: { id: arr[0] },
     });
     userRet.password = this.hashPassword(password);
 
-    const updatedUser = this.userRepository.update(
-      userId,
-      userRet,
-    );
+    const updatedUser = this.userRepository.update(arr[0], userRet);
     return updatedUser;
   }
 
   sendEmailForgotPassword(to: string, userId: number): void {
-    const text = AES.encrypt(userId.toString(), process.env.SECRET_CRYPTO);
+    const currentDate = new Date();
+    const year = getYear(currentDate);
+    const month = getMonth(currentDate);
+    const day = getDay(currentDate);
+    const hour = getHours(currentDate);
+    const minutes = getMinutes(currentDate);
+
+    const encriptMessage = `${userId}|${year}|${month}|${day}|${hour}|${minutes}`;
+
+    const text = AES.encrypt(encriptMessage, process.env.SECRET_CRYPTO);
     const subject = 'Forgot password';
 
     this.sendEmailService.sendEmail(to, subject, text.toString());
