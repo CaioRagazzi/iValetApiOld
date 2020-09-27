@@ -6,7 +6,14 @@ import { UserUpdateDto } from './dto/update-user.dto';
 import { UserInsertDto } from './dto/insert-user.dto';
 import { SendEmailService } from 'src/senEmail/sendEmail.service';
 import { AES, enc } from 'crypto-js';
-import { getYear, getMonth, getDay, getHours, getMinutes } from 'date-fns';
+import {
+  getYear,
+  getMonth,
+  getDate,
+  getHours,
+  getMinutes,
+  differenceInMinutes,
+} from 'date-fns';
 
 @Injectable()
 export class UserService {
@@ -48,9 +55,13 @@ export class UserService {
   }
 
   async updatePassword(hash: string, password: string): Promise<UpdateResult> {
-    const idDecrypted = AES.decrypt(hash, process.env.SECRET_CRYPTO);
-    const decryptedMessage = idDecrypted.toString(enc.Utf8);
+    const decryptedMessage = this.decryptMessage(hash);
     const arr = decryptedMessage.split('|');
+    const dateInitial = new Date(+arr[1], +arr[2], +arr[3], +arr[4], +arr[5]);
+
+    if (this.isSessionForChangePasswordIsExpired(dateInitial)) {
+      throw new Error('Session Expired');
+    }
 
     const userRet = await this.userRepository.findOne({
       where: { id: arr[0] },
@@ -65,7 +76,7 @@ export class UserService {
     const currentDate = new Date();
     const year = getYear(currentDate);
     const month = getMonth(currentDate);
-    const day = getDay(currentDate);
+    const day = getDate(currentDate);
     const hour = getHours(currentDate);
     const minutes = getMinutes(currentDate);
 
@@ -86,5 +97,21 @@ export class UserService {
 
   comparePassword(password: string, hash: string): boolean {
     return compareSync(password, hash);
+  }
+
+  private decryptMessage(message: string): string {
+    const idDecrypted = AES.decrypt(message, process.env.SECRET_CRYPTO);
+    const decryptedMessage = idDecrypted.toString(enc.Utf8);
+
+    return decryptedMessage;
+  }
+
+  private isSessionForChangePasswordIsExpired(initialDate: Date): boolean {
+    const diff = differenceInMinutes(initialDate, new Date());
+    if (diff <= -120) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

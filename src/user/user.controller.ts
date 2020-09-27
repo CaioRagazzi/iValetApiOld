@@ -61,14 +61,19 @@ export class UserController {
   async UpdatePassword(
     @Query('hash') hash: string,
     @Query('password') password: string,
-  ): Promise<UpdateResult> {    
+  ): Promise<UpdateResult> {
     try {
       console.log('oi');
-      
+
       const userRet = await this.userService.updatePassword(hash, password);
       return userRet;
     } catch (error) {
-      throw new HttpException(error.sqlMessage, HttpStatus.BAD_REQUEST);
+      console.log(error.message);
+      if (error.message) {
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      } else {
+        throw new HttpException(error.sqlMessage, HttpStatus.BAD_REQUEST);
+      }
     }
   }
 
