@@ -85,18 +85,18 @@ export class UserService {
     const user = await this.findOneById(userId);
 
     const text = `
-    Olá <b>${user.name}</b>,
-
-    Você solicitou o restart de sua senha, favor clicar no link abaixo e realizar a alteração da senha:
-
+    <p>Olá <b>${user.name}</b></p>,
+    <br/>
+    <p>Você solicitou o restart de sua senha, favor clicar no link abaixo e realizar a alteração da senha:</p>
+    <br/>
     http://localhost:8080/resetpassword?hash=${AES.encrypt(
       encriptMessage,
       process.env.SECRET_CRYPTO,
     )}
-
-    Atenciosamente,
-
-    Equipe iValet    
+    <br/>
+    <p>Atenciosamente,</p>
+    <br/>
+    <p>Equipe iValet</p> 
     `;
     const subject = 'Forgot password';
 
