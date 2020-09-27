@@ -63,12 +63,9 @@ export class UserController {
     @Query('password') password: string,
   ): Promise<UpdateResult> {
     try {
-      console.log('oi');
-
       const userRet = await this.userService.updatePassword(hash, password);
       return userRet;
     } catch (error) {
-      console.log(error.message);
       if (error.message) {
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       } else {

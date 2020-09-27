@@ -15,7 +15,6 @@ export class CompanyController {
             const newCompany = await this.companyService.create(company);
             return newCompany;
         } catch (error) {
-            console.log(error);
             throw new HttpException(error.sqlMessage, HttpStatus.BAD_REQUEST);
         }
     }

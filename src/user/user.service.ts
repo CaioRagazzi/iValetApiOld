@@ -82,7 +82,20 @@ export class UserService {
 
     const encriptMessage = `${userId}|${year}|${month}|${day}|${hour}|${minutes}`;
 
-    const text = `http://localhost:8080/resetpassword?hash=${AES.encrypt(encriptMessage, process.env.SECRET_CRYPTO)}`;
+    const text = `
+    Olá,
+
+    Você solicitou o restart de sua senha, favor clicar no link abaixo e realizar a alteração da senha:
+
+    http://localhost:8080/resetpassword?hash=${AES.encrypt(
+      encriptMessage,
+      process.env.SECRET_CRYPTO,
+    )}
+
+    Atenciosamente,
+
+    Equipe iValet    
+    `;
     const subject = 'Forgot password';
 
     this.sendEmailService.sendEmail(to, subject, text.toString());
