@@ -86,16 +86,12 @@ export class UserService {
 
     const text = `
     <p>Olá <b>${user.name},</b></p>
-    <br/>
     <p>Você solicitou o restart de sua senha, favor clicar no link abaixo e realizar a alteração da senha:</p>
-    <br/>
-    http://localhost:8080/resetpassword?hash=${AES.encrypt(
+    <p>http://localhost:8080/resetpassword?hash=${AES.encrypt(
       encriptMessage,
       process.env.SECRET_CRYPTO,
-    )}
-    <br/>
+    )}</p>
     <p>Atenciosamente,</p>
-    <br/>
     <p>Equipe iValet</p> 
     `;
     const subject = 'Forgot password';
