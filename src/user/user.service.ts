@@ -72,7 +72,7 @@ export class UserService {
     return updatedUser;
   }
 
-  sendEmailForgotPassword(to: string, userId: number): void {
+  async sendEmailForgotPassword(to: string, userId: number): void {
     const currentDate = new Date();
     const year = getYear(currentDate);
     const month = getMonth(currentDate);
@@ -82,8 +82,10 @@ export class UserService {
 
     const encriptMessage = `${userId}|${year}|${month}|${day}|${hour}|${minutes}`;
 
+    const user = await this.findOneById(userId);
+
     const text = `
-    Olá,
+    Olá <b>${user.name}</b>,
 
     Você solicitou o restart de sua senha, favor clicar no link abaixo e realizar a alteração da senha:
 
