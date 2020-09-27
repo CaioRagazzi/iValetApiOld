@@ -85,7 +85,7 @@ export class UserService {
     const user = await this.findOneById(userId);
 
     const text = `
-    <p>Olá <b>${user.name}</b></p>,
+    <p>Olá <b>${user.name},</b></p>
     <br/>
     <p>Você solicitou o restart de sua senha, favor clicar no link abaixo e realizar a alteração da senha:</p>
     <br/>
