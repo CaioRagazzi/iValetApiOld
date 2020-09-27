@@ -87,7 +87,7 @@ export class UserService {
     const text = `
     <p>Olá <b>${user.name},</b></p>
     <p>Você solicitou o restart de sua senha, favor clicar no link abaixo e realizar a alteração:</p>
-    <p>http://localhost:8080/resetpassword?hash=${AES.encrypt(
+    <p>http://ragazzitech.caioragazzi.com:82/resetpassword?hash=${AES.encrypt(
       encriptMessage,
       process.env.SECRET_CRYPTO,
     )}</p>
