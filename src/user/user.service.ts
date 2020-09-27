@@ -82,7 +82,7 @@ export class UserService {
 
     const encriptMessage = `${userId}|${year}|${month}|${day}|${hour}|${minutes}`;
 
-    const text = AES.encrypt(encriptMessage, process.env.SECRET_CRYPTO);
+    const text = `http://localhost:8080/resetpassword?hash=${AES.encrypt(encriptMessage, process.env.SECRET_CRYPTO)}`;
     const subject = 'Forgot password';
 
     this.sendEmailService.sendEmail(to, subject, text.toString());
