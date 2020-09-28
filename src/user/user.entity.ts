@@ -1,7 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, Index, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Index,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { Company } from 'src/company/company.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Perfil } from 'src/perfil/perfil.entity';
 
 @Entity()
 export class User {
@@ -28,6 +36,16 @@ export class User {
   @Index({ unique: true })
   email: string;
 
-  @OneToMany(type => Company, company => company.user)
-  company: Company[]
+  @OneToMany(
+    type => Company,
+    company => company.user,
+  )
+  company: Company[];
+
+  @ManyToOne(
+    type => Perfil,
+    perfil => perfil.user,
+    { nullable: false },
+  )
+  perfil: Perfil;
 }

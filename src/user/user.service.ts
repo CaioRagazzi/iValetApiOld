@@ -14,6 +14,7 @@ import {
   getMinutes,
   differenceInMinutes,
 } from 'date-fns';
+import { PerfilService } from 'src/perfil/perfil.service';
 
 @Injectable()
 export class UserService {
@@ -21,6 +22,7 @@ export class UserService {
     @Inject('USER_REPOSITORY')
     private userRepository: Repository<User>,
     private sendEmailService: SendEmailService,
+    private perfilService: PerfilService,
   ) {}
 
   async findOneByEmail(email: string): Promise<User | undefined> {
@@ -40,6 +42,9 @@ export class UserService {
     userInst.email = user.email;
     userInst.name = user.name;
     userInst.password = this.hashPassword(user.password);
+
+    const perfil = await this.perfilService.get(user.perfil);
+    userInst.perfil = perfil;
 
     return this.userRepository.insert(userInst);
   }
