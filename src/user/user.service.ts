@@ -4,7 +4,7 @@ import { User } from './user.entity';
 import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserInsertDto } from './dto/insert-user.dto';
-import { SendEmailService } from 'src/senEmail/sendEmail.service';
+import { SendEmailService } from 'src/sendEmail/sendEmail.service';
 import { AES, enc } from 'crypto-js';
 import {
   getYear,
@@ -26,12 +26,12 @@ export class UserService {
   ) {}
 
   async findOneByEmail(email: string): Promise<User | undefined> {
-    const user = this.userRepository.findOne({ where: { email: email }, relations: ['perfil'] });
+    const user = this.userRepository.findOne({ where: { email: email }, relations: ['company', 'perfil'] });
     return user;
   }
 
   async findOneById(id: number): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { id: id } });
+    return this.userRepository.findOne({ where: { id: id }, relations: ['company', 'perfil'] });
   }
 
   async findAll(): Promise<User[]> {

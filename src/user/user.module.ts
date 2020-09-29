@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PerfilModule } from 'src/perfil/perfil.module';
-import { SendEmailModule } from 'src/senEmail/sendEmail.module';
+import { SendEmailModule } from 'src/sendEmail/sendEmail.module';
 import { DatabaseModule } from '../database/database.module';
 import { UserController } from './user.controller';
 import { userProviders } from './user.providers';

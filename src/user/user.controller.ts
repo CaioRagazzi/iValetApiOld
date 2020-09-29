@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { SendEmailForgotPasswordDto } from 'src/senEmail/dto/send-email-forgot-password.dto';
+import { SendEmailForgotPasswordDto } from 'src/sendEmail/dto/send-email-forgot-password.dto';
 import { User } from 'src/user/user.entity';
 import { InsertResult, UpdateResult } from 'typeorm';
 import { UserInsertDto } from './dto/insert-user.dto';
@@ -33,10 +33,10 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get()
-  async Get(): Promise<User[]> {
+  @Get(':userId')
+  async GetById(@Param('userId') userId: number): Promise<User> {
     try {
-      const userRet = await this.userService.findAll();
+      const userRet = await this.userService.findOneById(userId);
       return userRet;
     } catch (error) {
       throw new HttpException(error.sqlMessage, HttpStatus.BAD_REQUEST);
