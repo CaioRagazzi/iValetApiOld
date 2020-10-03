@@ -7,7 +7,7 @@ import {
   Get,
   Param,
 } from '@nestjs/common';
-import { InsertResult } from 'typeorm';
+import { ObjectLiteral } from 'typeorm';
 import { InsertTransactionDto } from './dto/insert-transaction.dto';
 import { Transaction } from './transaction.entity';
 import { TransactionService } from './transaction.service';
@@ -19,12 +19,13 @@ export class TransactionController {
   @Post()
   async create(
     @Body() transaction: InsertTransactionDto,
-  ): Promise<InsertResult> {
-    try {
-      const result = this.transactionService.create(transaction);
-      return result;
-    } catch (error) {
-      throw new HttpException(error.sqlMessage, HttpStatus.BAD_REQUEST);
+  ): Promise<ObjectLiteral> {
+    const result = await this.transactionService.create(transaction);
+
+    if (result.generatedMaps) {
+      return result.generatedMaps;
+    } else {
+      throw new HttpException(result, HttpStatus.BAD_REQUEST);
     }
   }
 

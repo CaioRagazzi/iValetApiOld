@@ -24,10 +24,10 @@ export class TransactionService {
     transactionInst.company = company;
 
     try {
-      const transactionRe = await this.transactionRepository.insert(
-        transactionInst,
+    const transactionRe = await this.transactionRepository.insert(
+      transactionInst,
       );
-
+      
       this.emitTransactions(company.id);
       return transactionRe;
     } catch (error) {
