@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from "./user/user.module";
+import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
 import { SendEmailModule } from './sendEmail/sendEmail.module';
 import { PerfilModule } from './perfil/perfil.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { PerfilModule } from './perfil/perfil.module';
     AuthModule,
     CompanyModule,
     SendEmailModule,
-    PerfilModule
+    PerfilModule,
+    TransactionModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
