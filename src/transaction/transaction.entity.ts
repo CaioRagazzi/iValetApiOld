@@ -6,12 +6,11 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Company } from 'src/company/company.entity';
 
 @Entity()
-@Unique('UQ_NAMES', ['company', 'placa'])
 export class Transaction {
   @ApiProperty()
   @PrimaryGeneratedColumn()
@@ -22,6 +21,17 @@ export class Transaction {
   @IsString()
   @Column({ length: 100 })
   placa: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsDate()
+  @Column()
+  startDate: Date;
+
+  @ApiProperty()
+  @IsDate()
+  @Column({ nullable: true })
+  endDate: Date;
 
   @ManyToOne(
     type => Company,

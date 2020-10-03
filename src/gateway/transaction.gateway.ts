@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -8,28 +7,26 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Transaction } from 'src/transaction/transaction.entity';
+import { verify } from 'jsonwebtoken';
 
 @WebSocketGateway()
 export class TransactionGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
-  private logger: Logger = new Logger('AppGateway');
 
-  handleDisconnect(client: Socket): void {
-    this.logger.log(`Disconnected ${client.id}`);
-  }
+  handleDisconnect(client: Socket): void {}
 
   handleConnection(client: Socket, ...args: any[]): void {
-    console.log(...args);
-
-    this.logger.log(`Connected ${client.id}`);
+    verify(client.handshake.query.token, process.env.JWT_KEY, function(err) {
+      if (err) {
+        client.disconnect();
+      }
+    });
   }
 
-  afterInit(server: Server): void {
-    this.logger.log(`Initialized server: ${server}`);
-  }
+  afterInit(server: Server): void {}
 
-  sendMessage(companyId: number, transaction: Transaction[]): void {
-    this.wss.emit(`msgToClient:company:${companyId}`, transaction);    
+  sendOpenedTransactionsMessage(companyId: number, transaction: Transaction[]): void {
+    this.wss.emit(`openedTransactions:company:${companyId}`, transaction);
   }
 }
