@@ -14,8 +14,7 @@ export class AuthController {
     @UseGuards(AuthGuard('local'))
     @Post()
     async login(@Body() user: UserLoginDto): Promise<{access_token: string}> {
-        const userReturn = await this.userService.findOneByEmail(user.username);
-        
+        const userReturn = await this.userService.findOneByEmail(user.username);        
         return this.authService.login(userReturn);
     }
 }

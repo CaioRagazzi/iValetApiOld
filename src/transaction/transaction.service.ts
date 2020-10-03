@@ -3,7 +3,7 @@ import { InsertResult, Repository } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { InsertTransactionDto } from './dto/insert-transaction.dto';
 import { CompanyService } from 'src/company/company.service';
-import { TransactionGateway } from './transaction.gateway';
+import { TransactionGateway } from 'src/gateway/transaction.gateway';
 
 @Injectable()
 export class TransactionService {
@@ -48,6 +48,6 @@ export class TransactionService {
   async emitTransactions(companyId: number): Promise<void> {
     const transactions = await this.getByCompanyId(companyId);
 
-    this.transactionGateway.wss.emit('msgToClient', { transactions });
+    this.transactionGateway.sendMessage(companyId, transactions);
   }
 }

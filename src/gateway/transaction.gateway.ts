@@ -3,14 +3,11 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsResponse,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Transaction } from './transaction.entity';
-import { TransactionService } from './transaction.service';
+import { Transaction } from 'src/transaction/transaction.entity';
 
 @WebSocketGateway()
 export class TransactionGateway
@@ -18,20 +15,21 @@ export class TransactionGateway
   @WebSocketServer() wss: Server;
   private logger: Logger = new Logger('AppGateway');
 
-  handleDisconnect(client: Socket) {
+  handleDisconnect(client: Socket): void {
     this.logger.log(`Disconnected ${client.id}`);
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
+  handleConnection(client: Socket, ...args: any[]): void {
+    console.log(...args);
+
     this.logger.log(`Connected ${client.id}`);
   }
 
-  afterInit(server: Server) {
-    this.logger.log('Initialized');
+  afterInit(server: Server): void {
+    this.logger.log(`Initialized server: ${server}`);
   }
 
-  @SubscribeMessage('msgToServer')
-  handleMessage(client: Socket, text: string): WsResponse<string> {
-    return { event: 'msgToClient', data: 'Hello World' };
+  sendMessage(companyId: number, transaction: Transaction[]): void {
+    this.wss.emit(`msgToClient:company:${companyId}`, transaction);    
   }
 }

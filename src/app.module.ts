@@ -5,6 +5,7 @@ import { CompanyModule } from './company/company.module';
 import { SendEmailModule } from './sendEmail/sendEmail.module';
 import { PerfilModule } from './perfil/perfil.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TransactionModule } from './transaction/transaction.module';
     SendEmailModule,
     PerfilModule,
     TransactionModule,
+    GatewayModule,
   ],
 })
 export class AppModule {}
