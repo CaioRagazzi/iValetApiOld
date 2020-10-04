@@ -11,4 +11,8 @@ export class InsertTransactionDto {
   @IsNotEmpty()
   @IsNumber()
   companyId: number;
+
+  @ApiProperty()
+  @IsNumber()
+  prismaNumber: number;
 }

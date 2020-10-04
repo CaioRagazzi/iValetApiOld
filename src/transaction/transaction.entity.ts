@@ -6,7 +6,7 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Company } from 'src/company/company.entity';
 
@@ -21,6 +21,11 @@ export class Transaction {
   @IsString()
   @Column({ length: 100 })
   placa: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @Column()
+  prisma: number;
 
   @ApiProperty()
   @IsNotEmpty()

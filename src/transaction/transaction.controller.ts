@@ -8,13 +8,16 @@ import {
   Param,
   Query,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ObjectLiteral, UpdateResult } from 'typeorm';
 import { FinishTransactionDto } from './dto/finish-transaction.dto';
 import { InsertTransactionDto } from './dto/insert-transaction.dto';
 import { Transaction } from './transaction.entity';
 import { TransactionService } from './transaction.service';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('transaction')
 export class TransactionController {
   constructor(private transactionService: TransactionService) {}
@@ -27,7 +30,7 @@ export class TransactionController {
       transaction.placa,
       transaction.companyId,
     );
-    
+
     if (isCarIn) {
       throw new HttpException('Cars already in', HttpStatus.BAD_REQUEST);
     }

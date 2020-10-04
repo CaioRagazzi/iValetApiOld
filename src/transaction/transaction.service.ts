@@ -24,6 +24,7 @@ export class TransactionService {
     transactionInst.placa = transaction.placa;
     transactionInst.company = company;
     transactionInst.startDate = new Date();
+    transactionInst.prisma = transaction.prismaNumber;
 
     try {
       const transactionRe = await this.transactionRepository.insert(
