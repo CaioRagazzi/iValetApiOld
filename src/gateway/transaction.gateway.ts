@@ -26,7 +26,17 @@ export class TransactionGateway
 
   afterInit(server: Server): void {}
 
-  sendOpenedTransactionsMessage(companyId: number, transaction: Transaction[]): void {
-    this.wss.emit(`openedTransactions:company:${companyId}`, transaction);
+  sendOpenedTransactionsMessage(
+    companyId: number,
+    transactions: Transaction[],
+  ): void {
+    this.wss.emit(`openedTransactions:company:${companyId}`, transactions);
+  }
+
+  sendFinishedTransactionsMessage(
+    companyId: number,
+    transactions: Transaction[],
+  ): void {
+    this.wss.emit(`finishedTransactions:company:${companyId}`, transactions);
   }
 }

@@ -10,6 +10,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ObjectLiteral, UpdateResult } from 'typeorm';
+import { FinishTransactionDto } from './dto/finish-transaction.dto';
 import { InsertTransactionDto } from './dto/insert-transaction.dto';
 import { Transaction } from './transaction.entity';
 import { TransactionService } from './transaction.service';
@@ -26,6 +27,7 @@ export class TransactionController {
       transaction.placa,
       transaction.companyId,
     );
+    
     if (isCarIn) {
       throw new HttpException('Cars already in', HttpStatus.BAD_REQUEST);
     }
@@ -60,13 +62,14 @@ export class TransactionController {
 
   @Put('finish')
   async finish(
-    @Query('transactionId') transactionId: number,
+    @Query() finishTransactionDto: FinishTransactionDto,
   ): Promise<UpdateResult> {
     try {
       const transaction = await this.transactionService.finishTransaction(
-        transactionId,
+        finishTransactionDto.transactionId,
+        finishTransactionDto.companyId,
       );
-  
+
       return transaction;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

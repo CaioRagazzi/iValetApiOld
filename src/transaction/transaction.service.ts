@@ -4,6 +4,7 @@ import { Transaction } from './transaction.entity';
 import { InsertTransactionDto } from './dto/insert-transaction.dto';
 import { CompanyService } from 'src/company/company.service';
 import { TransactionGateway } from 'src/gateway/transaction.gateway';
+import { startOfDay, endOfDay } from 'date-fns';
 
 @Injectable()
 export class TransactionService {
@@ -40,13 +41,15 @@ export class TransactionService {
     placa: string,
     companyId: number,
   ): Promise<boolean> {
-    const company = await this.companyService.findOneById(companyId);
+    const isCarIn = await this.transactionRepository
+      .createQueryBuilder()
+      .select()
+      .where('placa = :placa', { placa })
+      .andWhere('companyId = :companyId', { companyId })
+      .andWhere('endDate is null')
+      .getCount();
 
-    const isCarIn = await this.transactionRepository.findAndCount({
-      where: { placa: placa, company: company, endDate: null },
-    });
-
-    return isCarIn[1] > 0;
+    return isCarIn > 0;
   }
 
   async getByCompanyId(companyId: number): Promise<Transaction[]> {
@@ -60,45 +63,75 @@ export class TransactionService {
   }
 
   async getOpenedByCompanyId(companyId: number): Promise<Transaction[]> {
-    const company = await this.companyService.findOneById(companyId);
-
-    const transaction = this.transactionRepository.find({
-      where: { company: company, endDate: null },
-    });
+    const transaction = await this.transactionRepository
+      .createQueryBuilder()
+      .select('*')
+      .where('endDate is null')
+      .andWhere('companyId = :companyId', { companyId })
+      .getRawMany();
 
     return transaction;
   }
 
   async getFinishedByCompanyId(companyId: number): Promise<Transaction[]> {
-    const company = await this.companyService.findOneById(companyId);
+    const transactions = await this.transactionRepository
+      .createQueryBuilder()
+      .select('id, placa, endDate, startDate')
+      .where('endDate between :todayZero and :todayEnd', {
+        todayZero: startOfDay(new Date()),
+        todayEnd: endOfDay(new Date()),
+      })
+      .andWhere('companyId = :companyId', { companyId })
+      .execute();
 
-    const transaction = this.transactionRepository.find({
-      where: { company: company, endDate: Not(IsNull()) },
-    });
-
-    return transaction;
+    return transactions;
   }
 
-  async finishTransaction(transactionId: number): Promise<UpdateResult> {
-    const transaction = await this.transactionRepository.findOne(transactionId);
+  async finishTransaction(
+    transactionId: number,
+    companyId: number,
+  ): Promise<UpdateResult> {
+    const transaction = await this.transactionRepository
+      .createQueryBuilder()
+      .select('*')
+      .where('id = :transactionId', { transactionId })
+      .getRawOne();
+
+    if (!transaction) {
+      throw new Error('Transactions does not exists');
+    }
 
     if (transaction.endDate !== null) {
       throw new Error('Transactions already finished');
     }
 
-    transaction.endDate = new Date();
-    const response = await this.transactionRepository.update(
-      transactionId,
-      transaction,
-    );
+    const response = await this.transactionRepository
+      .createQueryBuilder()
+      .update()
+      .set({ endDate: new Date() })
+      .where('id = :transactionId', { transactionId })
+      .execute();
+
+    if (response.affected > 0) {
+      this.emitFinishedTransactions(companyId);
+      this.emitOpenedTransactions(companyId);
+    }
 
     return response;
   }
 
   async emitOpenedTransactions(companyId: number): Promise<void> {
     const transactions = await this.getOpenedByCompanyId(companyId);
-
     this.transactionGateway.sendOpenedTransactionsMessage(
+      companyId,
+      transactions,
+    );
+  }
+
+  async emitFinishedTransactions(companyId: number): Promise<void> {
+    const transactions = await this.getFinishedByCompanyId(companyId);
+
+    this.transactionGateway.sendFinishedTransactionsMessage(
       companyId,
       transactions,
     );
