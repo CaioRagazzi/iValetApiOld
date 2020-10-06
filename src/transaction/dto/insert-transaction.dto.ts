@@ -13,6 +13,5 @@ export class InsertTransactionDto {
   companyId: number;
 
   @ApiProperty()
-  @IsNumber()
   prismaNumber: number;
 }

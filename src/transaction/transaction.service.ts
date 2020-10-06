@@ -5,6 +5,7 @@ import { InsertTransactionDto } from './dto/insert-transaction.dto';
 import { CompanyService } from 'src/company/company.service';
 import { TransactionGateway } from 'src/gateway/transaction.gateway';
 import { startOfDay, endOfDay } from 'date-fns';
+import { CaixaService } from 'src/caixa/caixa.service';
 
 @Injectable()
 export class TransactionService {
@@ -13,6 +14,7 @@ export class TransactionService {
     private transactionRepository: Repository<Transaction>,
     private companyService: CompanyService,
     private transactionGateway: TransactionGateway,
+    private caixaService: CaixaService,
   ) {}
 
   async create(transaction: InsertTransactionDto): Promise<InsertResult> {
@@ -20,11 +22,20 @@ export class TransactionService {
       transaction.companyId,
     );
 
+    const caixa = await this.caixaService.getOpenedCaixaByCompany(
+      transaction.companyId,
+    );
+
+    if (!caixa) {
+      throw new Error('Theres no opened caixa!');
+    }
+
     const transactionInst = new Transaction();
     transactionInst.placa = transaction.placa;
     transactionInst.company = company;
     transactionInst.startDate = new Date();
     transactionInst.prisma = transaction.prismaNumber;
+    transactionInst.caixa = caixa;
 
     try {
       const transactionRe = await this.transactionRepository.insert(
@@ -75,14 +86,14 @@ export class TransactionService {
   }
 
   async getFinishedByCompanyId(companyId: number): Promise<Transaction[]> {
+    const caixa = await this.caixaService.getOpenedCaixaByCompany(companyId);
+
     const transactions = await this.transactionRepository
       .createQueryBuilder()
       .select('id, placa, endDate, startDate')
-      .where('endDate between :todayZero and :todayEnd', {
-        todayZero: startOfDay(new Date()),
-        todayEnd: endOfDay(new Date()),
-      })
+      .where('caixaId = :caixaId', { caixaId: caixa.id })
       .andWhere('companyId = :companyId', { companyId })
+      .andWhere('endDate is not null')
       .execute();
 
     return transactions;

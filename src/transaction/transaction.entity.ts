@@ -24,7 +24,7 @@ export class Transaction {
 
   @ApiProperty()
   @IsNumber()
-  @Column()
+  @Column({ nullable: true })
   prisma: number;
 
   @ApiProperty()

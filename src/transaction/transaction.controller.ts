@@ -26,20 +26,20 @@ export class TransactionController {
   async create(
     @Body() transaction: InsertTransactionDto,
   ): Promise<ObjectLiteral> {
-    const isCarIn = await this.transactionService.checkIfCarAlreadyIn(
-      transaction.placa,
-      transaction.companyId,
-    );
+    try {
+      const isCarIn = await this.transactionService.checkIfCarAlreadyIn(
+        transaction.placa,
+        transaction.companyId,
+      );
 
-    if (isCarIn) {
-      throw new HttpException('Cars already in', HttpStatus.BAD_REQUEST);
-    }
-    const result = await this.transactionService.create(transaction);
+      if (isCarIn) {
+        throw new HttpException('Cars already in', HttpStatus.BAD_REQUEST);
+      }
+      const result = await this.transactionService.create(transaction);
 
-    if (result.generatedMaps) {
       return result.generatedMaps;
-    } else {
-      throw new HttpException(result, HttpStatus.BAD_REQUEST);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
