@@ -11,6 +11,7 @@ import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { User } from 'src/user/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transaction } from 'src/transaction/transaction.entity';
+import { Caixa } from 'src/caixa/caixa.entity';
 
 @Entity()
 @Unique('UQ_NAMES', ['name', 'user'])
@@ -28,14 +29,20 @@ export class Company {
   @IsNotEmpty()
   @IsInt()
   @ManyToOne(
-    type => User,
+    () => User,
     user => user.company,
   )
   user: User;
 
   @OneToMany(
-    type => Transaction,
+    () => Transaction,
     transaction => transaction.company,
   )
   transaction: Transaction[];
+
+  @OneToMany(
+    () => Caixa,
+    caixa => caixa.company,
+  )
+  caixa: Caixa[];
 }

@@ -6,6 +6,7 @@ import { SendEmailModule } from './sendEmail/sendEmail.module';
 import { PerfilModule } from './perfil/perfil.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { GatewayModule } from './gateway/gateway.module';
+import { CaixaModule } from './caixa/caixa.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { GatewayModule } from './gateway/gateway.module';
     PerfilModule,
     TransactionModule,
     GatewayModule,
+    CaixaModule,
   ],
 })
 export class AppModule {}

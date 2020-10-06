@@ -4,11 +4,11 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   ManyToOne,
-  Unique,
 } from 'typeorm';
 import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Company } from 'src/company/company.entity';
+import { Caixa } from 'src/caixa/caixa.entity';
 
 @Entity()
 export class Transaction {
@@ -45,4 +45,12 @@ export class Transaction {
   )
   @JoinColumn()
   company: Company;
+
+  @ManyToOne(
+    type => Caixa,
+    caixa => caixa.transaction,
+    { nullable: false },
+  )
+  @JoinColumn()
+  caixa: Caixa;
 }
