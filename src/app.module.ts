@@ -7,6 +7,7 @@ import { PerfilModule } from './perfil/perfil.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { CaixaModule } from './caixa/caixa.module';
+import { PriceModule } from './price/price.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CaixaModule } from './caixa/caixa.module';
     TransactionModule,
     GatewayModule,
     CaixaModule,
+    PriceModule
   ],
 })
 export class AppModule {}
