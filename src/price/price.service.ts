@@ -20,16 +20,6 @@ export class PriceService {
       throw new Error('Type 2 requires to and from!');
     }
 
-    if (price.type === 2) {
-      const priceReturn = await this.getByWeekDayAndCompanyId(
-        price.companyId,
-        price.weekDay,
-      );
-      if (priceReturn) {
-        throw new Error('Same weekday for price company already exists!');
-      }
-    }
-
     const company = await this.companyService.findOneById(price.companyId);
 
     if (!company) {
@@ -47,6 +37,7 @@ export class PriceService {
           price: price.price,
           type: price.type,
           weekDay: price.weekDay,
+          uniqueIdPrice: price.uniqueIdPrice
         },
       ])
       .execute();

@@ -18,7 +18,7 @@ export class InsertPriceDto {
   from: number;
 
   @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   weekDay: string;
 
@@ -31,4 +31,9 @@ export class InsertPriceDto {
   @IsNotEmpty()
   @IsNumber()
   price: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  uniqueIdPrice: string;
 }

@@ -48,4 +48,9 @@ export class Price {
   )
   @JoinColumn()
   company: Company;
+
+  @ApiProperty()
+  @IsString()
+  @Column({ nullable: false })
+  uniqueIdPrice: string;
 }
