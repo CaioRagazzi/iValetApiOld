@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserModule } from '../../user/user.module';
-import { CompanyModule } from '../../company/company.module';
 import { UserService } from '../../user/user.service';
-import { PerfilModule } from '../../perfil/perfil.module';
 import { getRepositoryToken } from '@nestjs/typeorm/dist/common/typeorm.utils';
 import { User } from '../../user/user.entity';
+import { SendEmailService } from '../../sendEmail/sendEmail.service';
+import { PerfilService } from '../../perfil/perfil.service';
+import { Perfil } from '../../perfil/perfil.entity';
 
 describe('UserService', () => {
   let service: UserService;
@@ -16,12 +16,18 @@ describe('UserService', () => {
     update: jest.fn(),
   }
 
+  const perfilRepository = {
+
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CompanyModule, UserModule, PerfilModule],
       providers: [UserService, {
         provide: getRepositoryToken(User),
         useValue: mockRepository
+      }, SendEmailService, PerfilService, {
+        provide: getRepositoryToken(Perfil),
+        useValue: perfilRepository
       }],
     }).compile();
 
