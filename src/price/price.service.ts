@@ -26,6 +26,17 @@ export class PriceService {
       throw new Error('Company does not exists!');
     }
 
+    const splitedWeekDay = price.weekDay.split('|');
+    const hasSameDay = await this.checkIfSameDayHasAlreadyBeenInserted(
+      splitedWeekDay,
+      price.companyId,
+      price.uniqueIdPrice,
+    );
+
+    if (hasSameDay) {
+      throw new Error('Same day has already been added!');
+    }
+
     const result = await this.priceRepository
       .createQueryBuilder()
       .insert()
@@ -37,12 +48,38 @@ export class PriceService {
           price: price.price,
           type: price.type,
           weekDay: price.weekDay,
-          uniqueIdPrice: price.uniqueIdPrice
+          uniqueIdPrice: price.uniqueIdPrice,
         },
       ])
       .execute();
 
     return result.generatedMaps;
+  }
+
+  async checkIfSameDayHasAlreadyBeenInserted(
+    splitedWeekDay: string[],
+    companyId: number,
+    uniqueIdPrice: string,
+  ): Promise<boolean> {
+    const prices = await this.priceRepository
+      .createQueryBuilder()
+      .select()
+      .where('companyId = :companyId', { companyId })
+      .getMany();
+
+    let hasSameDay = false;
+    prices.map(price => {
+      const splitedReturn = price.weekDay.split('|');
+      splitedReturn.map(day => {
+        splitedWeekDay.map(dayParam => {
+          if (day === dayParam && price.uniqueIdPrice !== uniqueIdPrice) {
+            hasSameDay = true;
+          }
+        });
+      });
+    });
+
+    return hasSameDay;
   }
 
   async getById(priceId: number): Promise<Price> {
