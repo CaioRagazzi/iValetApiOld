@@ -24,7 +24,7 @@ export class PriceService {
     const company = await this.companyService.findOneById(price.companyId);
 
     const splitedWeekDay = price.weekDay.split('|');
-    
+
     await this.checkIfSameDayHasAlreadyBeenInserted(
       splitedWeekDay,
       price.companyId,
@@ -48,6 +48,26 @@ export class PriceService {
       .execute();
 
     return result.generatedMaps;
+  }
+
+  async getPrices(companyId: number): Promise<Price[]> {
+    const prices = await this.priceRepository
+      .createQueryBuilder()
+      .select(['weekDay', 'uniqueIdPrice', 'companyId', 'type'])
+      .groupBy('uniqueIdPrice')
+      .having('companyId = :companyId', { companyId })
+      .getRawMany();
+
+    return prices;
+  }
+
+  async getPriceByUniqueId(uniqueIdPrice: number): Promise<Price[]> {
+    const prices = await this.priceRepository
+      .createQueryBuilder()
+      .where('uniqueIdPrice = :uniqueIdPrice', { uniqueIdPrice })
+      .getMany();
+
+    return prices;
   }
 
   private async checkIfSameDayHasAlreadyBeenInserted(
