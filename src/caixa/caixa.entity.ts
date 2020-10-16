@@ -5,11 +5,10 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'src/user/user.entity';
-import { Transaction } from 'src/transaction/transaction.entity';
-import { Company } from 'src/company/company.entity';
+import { Transaction } from '../transaction/transaction.entity';
+import { Company } from '../company/company.entity';
 
 @Entity()
 export class Caixa {

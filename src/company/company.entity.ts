@@ -5,13 +5,12 @@ import {
   ManyToOne,
   Unique,
   OneToMany,
-  OneToOne,
 } from 'typeorm';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transaction } from 'src/transaction/transaction.entity';
-import { Caixa } from 'src/caixa/caixa.entity';
+import { Transaction } from '../transaction/transaction.entity';
+import { Caixa } from '../caixa/caixa.entity';
 
 @Entity()
 @Unique('UQ_NAMES', ['name', 'user'])

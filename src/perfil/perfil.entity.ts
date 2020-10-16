@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Perfil {
@@ -15,6 +15,6 @@ export class Perfil {
   @Column({ length: 100 })
   name: string;
 
-  @OneToMany(type => User, user => user.perfil)
+  @OneToMany(() => User, user => user.perfil)
   user: User;
 }

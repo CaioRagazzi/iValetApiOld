@@ -7,10 +7,9 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { IsDate, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { Company } from 'src/company/company.entity';
+import { Company } from '../company/company.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { Perfil } from 'src/perfil/perfil.entity';
-import { format } from "date-fns";
+import { Perfil } from '../perfil/perfil.entity';
 
 @Entity()
 export class User {

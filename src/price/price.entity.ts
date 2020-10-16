@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { IsDecimal, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Company } from 'src/company/company.entity';
+import { Company } from '../company/company.entity';
 
 @Entity()
 export class Price {

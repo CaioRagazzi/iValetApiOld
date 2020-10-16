@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { CompanyModule } from 'src/company/company.module';
-import { DatabaseModule } from 'src/database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CompanyModule } from '../company/company.module';
 import { CaixaController } from './caixa.controller';
-import { caixaProviders } from './caixa.provider';
+import { Caixa } from './caixa.entity';
 import { CaixaService } from './caixa.service';
 
 @Module({
   controllers: [CaixaController],
-  imports: [DatabaseModule, CompanyModule],
-  providers: [...caixaProviders, CaixaService],
+  imports: [TypeOrmModule.forFeature([Caixa]), CompanyModule],
+  providers: [CaixaService],
   exports: [CaixaService],
 })
 export class CaixaModule {}

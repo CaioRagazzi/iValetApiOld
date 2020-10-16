@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from 'src/database/database.module';
-import { perfilProviders } from './perfil.provider';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Perfil } from './perfil.entity';
 import { PerfilService } from './perfil.service';
 
 @Module({
-  imports: [DatabaseModule],
-  providers: [...perfilProviders, PerfilService],
+  imports: [TypeOrmModule.forFeature([Perfil])],
+  providers: [PerfilService],
   exports: [PerfilService],
 })
 export class PerfilModule {}

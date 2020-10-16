@@ -7,8 +7,8 @@ import {
 } from 'typeorm';
 import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Company } from 'src/company/company.entity';
-import { Caixa } from 'src/caixa/caixa.entity';
+import { Company } from '../company/company.entity';
+import { Caixa } from '../caixa/caixa.entity';
 
 @Entity()
 export class Transaction {

@@ -29,6 +29,7 @@
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/platform-socket.io": "^7.4.4",
     "@nestjs/swagger": "^4.6.1",
+    "@nestjs/typeorm": "^7.1.4",
     "@nestjs/websockets": "^7.4.4",
     "@types/crypto-js": "^3.1.47",
     "@types/nodemailer": "^6.4.0",

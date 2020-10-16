@@ -1,10 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
 import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserInsertDto } from './dto/insert-user.dto';
-import { SendEmailService } from 'src/sendEmail/sendEmail.service';
+import { SendEmailService } from '../sendEmail/sendEmail.service';
 import { AES, enc } from 'crypto-js';
 import {
   getYear,
@@ -14,12 +14,13 @@ import {
   getMinutes,
   differenceInMinutes,
 } from 'date-fns';
-import { PerfilService } from 'src/perfil/perfil.service';
+import { PerfilService } from '../perfil/perfil.service';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject('USER_REPOSITORY')
+    @InjectRepository(User)
     private userRepository: Repository<User>,
     private sendEmailService: SendEmailService,
     private perfilService: PerfilService,

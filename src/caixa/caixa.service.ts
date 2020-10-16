@@ -1,12 +1,13 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { CompanyService } from 'src/company/company.service';
-import { ObjectLiteral, Repository, UpdateResult } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { CompanyService } from '../company/company.service';
+import { ObjectLiteral, Repository } from 'typeorm';
 import { Caixa } from './caixa.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CaixaService {
   constructor(
-    @Inject('CAIXA_REPOSITORY')
+    @InjectRepository(Caixa)
     private caixaRepository: Repository<Caixa>,
     private companyService: CompanyService,
   ) {}

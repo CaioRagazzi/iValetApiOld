@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { CompanyModule } from 'src/company/company.module';
-import { DatabaseModule } from 'src/database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CompanyModule } from '../company/company.module';
 import { PriceController } from './price.controller';
-import { priceProviders } from './price.provider';
+import { Price } from './price.entity';
 import { PriceService } from './price.service';
 
 @Module({
   controllers: [PriceController],
-  imports: [DatabaseModule, CompanyModule],
-  providers: [...priceProviders, PriceService],
+  imports: [TypeOrmModule.forFeature([Price]), CompanyModule],
+  providers: [PriceService],
   exports: [PriceService],
 })
 export class PriceModule {}

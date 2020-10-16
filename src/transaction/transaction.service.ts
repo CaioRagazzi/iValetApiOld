@@ -1,16 +1,16 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { InsertResult, Repository, Not, IsNull, UpdateResult } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { InsertTransactionDto } from './dto/insert-transaction.dto';
-import { CompanyService } from 'src/company/company.service';
-import { TransactionGateway } from 'src/gateway/transaction.gateway';
-import { startOfDay, endOfDay } from 'date-fns';
-import { CaixaService } from 'src/caixa/caixa.service';
+import { CompanyService } from '../company/company.service';
+import { TransactionGateway } from '../gateway/transaction.gateway';
+import { CaixaService } from '../caixa/caixa.service';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TransactionService {
   constructor(
-    @Inject('TRANSACTION_REPOSITORY')
+    @InjectRepository(Transaction)
     private transactionRepository: Repository<Transaction>,
     private companyService: CompanyService,
     private transactionGateway: TransactionGateway,

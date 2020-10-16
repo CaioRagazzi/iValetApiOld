@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { PerfilModule } from 'src/perfil/perfil.module';
-import { SendEmailModule } from 'src/sendEmail/sendEmail.module';
-import { DatabaseModule } from '../database/database.module';
+import { PerfilModule } from '../perfil/perfil.module';
+import { SendEmailModule } from '../sendEmail/sendEmail.module';
 import { UserController } from './user.controller';
-import { userProviders } from './user.providers';
 import { UserService } from './user.service';
+import { TypeOrmModule } from '@nestjs/typeorm/dist';
+import { User } from './user.entity';
 
 @Module({
-  imports: [DatabaseModule, SendEmailModule, PerfilModule],
-  providers: [...userProviders, UserService],
+  imports: [TypeOrmModule.forFeature([User]),SendEmailModule, PerfilModule],
+  providers: [UserService],
   exports: [UserService],
   controllers: [UserController],
 })

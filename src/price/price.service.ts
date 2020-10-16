@@ -1,13 +1,14 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { CompanyService } from 'src/company/company.service';
-import { InsertResult, ObjectLiteral, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { CompanyService } from '../company/company.service';
+import { ObjectLiteral, Repository } from 'typeorm';
 import { InsertPriceDto } from './dto/insert-price.dto';
 import { Price } from './price.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PriceService {
   constructor(
-    @Inject('PRICE_REPOSITORY')
+    @InjectRepository(Price)
     private priceRepository: Repository<Price>,
     private companyService: CompanyService,
   ) {}
@@ -22,20 +23,13 @@ export class PriceService {
 
     const company = await this.companyService.findOneById(price.companyId);
 
-    if (!company) {
-      throw new Error('Company does not exists!');
-    }
-
     const splitedWeekDay = price.weekDay.split('|');
-    const hasSameDay = await this.checkIfSameDayHasAlreadyBeenInserted(
+    
+    await this.checkIfSameDayHasAlreadyBeenInserted(
       splitedWeekDay,
       price.companyId,
       price.uniqueIdPrice,
     );
-
-    if (hasSameDay) {
-      throw new Error('Same day has already been added!');
-    }
 
     const result = await this.priceRepository
       .createQueryBuilder()
@@ -56,30 +50,27 @@ export class PriceService {
     return result.generatedMaps;
   }
 
-  async checkIfSameDayHasAlreadyBeenInserted(
+  private async checkIfSameDayHasAlreadyBeenInserted(
     splitedWeekDay: string[],
     companyId: number,
     uniqueIdPrice: string,
-  ): Promise<boolean> {
+  ): Promise<void> {
     const prices = await this.priceRepository
       .createQueryBuilder()
       .select()
       .where('companyId = :companyId', { companyId })
       .getMany();
 
-    let hasSameDay = false;
     prices.map(price => {
       const splitedReturn = price.weekDay.split('|');
       splitedReturn.map(day => {
         splitedWeekDay.map(dayParam => {
           if (day === dayParam && price.uniqueIdPrice !== uniqueIdPrice) {
-            hasSameDay = true;
+            throw new Error('Same day has already been added!');
           }
         });
       });
     });
-
-    return hasSameDay;
   }
 
   async getById(priceId: number): Promise<Price> {

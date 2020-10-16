@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { CaixaModule } from 'src/caixa/caixa.module';
-import { CompanyModule } from 'src/company/company.module';
-import { DatabaseModule } from 'src/database/database.module';
-import { GatewayModule } from 'src/gateway/gateway.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CaixaModule } from '../caixa/caixa.module';
+import { CompanyModule } from '../company/company.module';
+import { GatewayModule } from '../gateway/gateway.module';
 import { TransactionController } from './transaction.controller';
-import { transactionProviders } from './transaction.provider';
+import { Transaction } from './transaction.entity';
 import { TransactionService } from './transaction.service';
 
 @Module({
   controllers: [TransactionController],
-  imports: [DatabaseModule, CompanyModule, GatewayModule, CaixaModule],
-  providers: [...transactionProviders, TransactionService],
+  imports: [TypeOrmModule.forFeature([Transaction]), CompanyModule, GatewayModule, CaixaModule],
+  providers: [TransactionService],
   exports: [TransactionService],
 })
 export class TransactionModule {}
