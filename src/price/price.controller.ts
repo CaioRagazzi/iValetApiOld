@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { InsertResult, ObjectLiteral } from 'typeorm';
+import { ObjectLiteral } from 'typeorm';
 import { InsertPriceDto } from './dto/insert-price.dto';
 import { PriceService } from './price.service';
 

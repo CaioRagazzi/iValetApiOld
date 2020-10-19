@@ -41,6 +41,11 @@ export class Price {
   @Column("decimal", { precision: 5, scale: 2, nullable: true })
   price: number;
 
+  @ApiProperty()
+  @IsDecimal()
+  @Column("decimal", { precision: 5, scale: 2, nullable: true })
+  maxPriceValue: number;
+
   @ManyToOne(
     type => Company,
     company => company.transaction,

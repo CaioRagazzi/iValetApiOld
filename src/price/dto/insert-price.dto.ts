@@ -33,6 +33,11 @@ export class InsertPriceDto {
   price: number;
 
   @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  maxPriceValue: number;
+
+  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   uniqueIdPrice: string;

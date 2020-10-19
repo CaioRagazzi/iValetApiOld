@@ -43,6 +43,7 @@ export class PriceService {
           type: price.type,
           weekDay: price.weekDay,
           uniqueIdPrice: price.uniqueIdPrice,
+          maxPriceValue: price.maxPriceValue,
         },
       ])
       .execute();
@@ -53,8 +54,9 @@ export class PriceService {
   async getPrices(companyId: number): Promise<Price[]> {
     const prices = await this.priceRepository
       .createQueryBuilder()
-      .select(['weekDay', 'uniqueIdPrice', 'companyId', 'type'])
+      .select(['weekDay', 'uniqueIdPrice', 'companyId', 'type', 'maxPriceValue'])
       .groupBy('uniqueIdPrice')
+      .addGroupBy('maxPriceValue')
       .having('companyId = :companyId', { companyId })
       .getRawMany();
 
@@ -66,7 +68,7 @@ export class PriceService {
       .createQueryBuilder()
       .where('uniqueIdPrice = :uniqueIdPrice', { uniqueIdPrice })
       .getMany();
-
+    
     return prices;
   }
 
