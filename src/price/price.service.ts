@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CompanyService } from '../company/company.service';
-import { ObjectLiteral, Repository } from 'typeorm';
+import { ObjectLiteral, Repository, UpdateResult } from 'typeorm';
 import { InsertPriceDto } from './dto/insert-price.dto';
 import { Price } from './price.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateFixedPriceDto } from './dto/update-fixed-price.dto';
 
 @Injectable()
 export class PriceService {
@@ -54,7 +55,14 @@ export class PriceService {
   async getPrices(companyId: number): Promise<Price[]> {
     const prices = await this.priceRepository
       .createQueryBuilder()
-      .select(['weekDay', 'uniqueIdPrice', 'companyId', 'type', 'maxPriceValue'])
+      .select([
+        'id',
+        'weekDay',
+        'uniqueIdPrice',
+        'companyId',
+        'type',
+        'maxPriceValue',
+      ])
       .groupBy('uniqueIdPrice')
       .addGroupBy('maxPriceValue')
       .having('companyId = :companyId', { companyId })
@@ -68,7 +76,7 @@ export class PriceService {
       .createQueryBuilder()
       .where('uniqueIdPrice = :uniqueIdPrice', { uniqueIdPrice })
       .getMany();
-    
+
     return prices;
   }
 
@@ -113,6 +121,37 @@ export class PriceService {
       .where('companyId = :companyId', { companyId })
       .andWhere('weekDay = :weekDay', { weekDay })
       .getOne();
+
+    return result;
+  }
+
+  async updateFixedPrice(
+    priceId: number,
+    priceDto: UpdateFixedPriceDto,
+  ): Promise<UpdateResult> {
+    const priceResult = await this.priceRepository
+      .createQueryBuilder()
+      .select()
+      .where('id = :id', { id: priceId })
+      .getOne();
+
+    if (priceResult.weekDay !== priceDto.weekDay) {
+      await this.checkIfSameDayHasAlreadyBeenInserted(
+        priceDto.weekDay.split('|'),
+        priceDto.companyId,
+        priceDto.uniqueIdPrice,
+      );
+    }
+
+    const result = await this.priceRepository
+      .createQueryBuilder()
+      .update()
+      .set({ weekDay: priceDto.weekDay, price: priceDto.price })
+      .where('id = :id', { id: priceId })
+      .andWhere('uniqueIdPrice = :uniqueIdPrice', {
+        uniqueIdPrice: priceDto.uniqueIdPrice,
+      })
+      .execute();
 
     return result;
   }

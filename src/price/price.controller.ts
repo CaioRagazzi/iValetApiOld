@@ -6,11 +6,13 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ObjectLiteral } from 'typeorm';
 import { InsertPriceDto } from './dto/insert-price.dto';
+import { UpdateFixedPriceDto } from './dto/update-fixed-price.dto';
 import { PriceService } from './price.service';
 
 @UseGuards(AuthGuard('jwt'))
@@ -48,6 +50,19 @@ export class PriceController {
   ): Promise<ObjectLiteral> {
     try {
       const result = await this.priceService.getPriceByUniqueId(uniqueId);
+
+      return result;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put(':priceId')
+  async UpdatePriceByPriceId(
+    @Param('priceId') priceId: number, @Body() updatePriceDto: UpdateFixedPriceDto
+  ): Promise<ObjectLiteral> {
+    try {
+      const result = await this.priceService.updateFixedPrice(priceId, updatePriceDto);
 
       return result;
     } catch (error) {
