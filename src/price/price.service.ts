@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CompanyService } from '../company/company.service';
-import { ObjectLiteral, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, ObjectLiteral, Repository, UpdateResult } from 'typeorm';
 import { InsertPriceDto } from './dto/insert-price.dto';
 import { Price } from './price.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -146,11 +146,27 @@ export class PriceService {
     const result = await this.priceRepository
       .createQueryBuilder()
       .update()
-      .set({ weekDay: priceDto.weekDay, price: priceDto.price, to: priceDto.to, from: priceDto.from, maxPriceValue: priceDto.maxValue })
+      .set({
+        weekDay: priceDto.weekDay,
+        price: priceDto.price,
+        to: priceDto.to,
+        from: priceDto.from,
+        maxPriceValue: priceDto.maxValue,
+      })
       .where('id = :id', { id: priceId })
       .andWhere('uniqueIdPrice = :uniqueIdPrice', {
         uniqueIdPrice: priceDto.uniqueIdPrice,
       })
+      .execute();
+
+    return result;
+  }
+
+  async deletePriceById(priceId: number): Promise<DeleteResult> {
+    const result = await this.priceRepository
+      .createQueryBuilder()
+      .delete()
+      .where('id = :id', { id: priceId })
       .execute();
 
     return result;
