@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDecimal, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateFixedPriceDto {
   @ApiProperty()
@@ -16,6 +16,21 @@ export class UpdateFixedPriceDto {
   @IsNotEmpty()
   @IsNumber()
   price: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  to: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  from: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDecimal()
+  maxValue: number;
 
   @ApiProperty()
   @IsNotEmpty()

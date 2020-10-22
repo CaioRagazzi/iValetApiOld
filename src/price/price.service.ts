@@ -125,7 +125,7 @@ export class PriceService {
     return result;
   }
 
-  async updateFixedPrice(
+  async updatePriceByPriceId(
     priceId: number,
     priceDto: UpdateFixedPriceDto,
   ): Promise<UpdateResult> {
@@ -146,7 +146,7 @@ export class PriceService {
     const result = await this.priceRepository
       .createQueryBuilder()
       .update()
-      .set({ weekDay: priceDto.weekDay, price: priceDto.price })
+      .set({ weekDay: priceDto.weekDay, price: priceDto.price, to: priceDto.to, from: priceDto.from, maxPriceValue: priceDto.maxValue })
       .where('id = :id', { id: priceId })
       .andWhere('uniqueIdPrice = :uniqueIdPrice', {
         uniqueIdPrice: priceDto.uniqueIdPrice,

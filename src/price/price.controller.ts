@@ -62,7 +62,7 @@ export class PriceController {
     @Param('priceId') priceId: number, @Body() updatePriceDto: UpdateFixedPriceDto
   ): Promise<ObjectLiteral> {
     try {
-      const result = await this.priceService.updateFixedPrice(priceId, updatePriceDto);
+      const result = await this.priceService.updatePriceByPriceId(priceId, updatePriceDto);
 
       return result;
     } catch (error) {
