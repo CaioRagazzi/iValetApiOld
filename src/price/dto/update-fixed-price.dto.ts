@@ -42,4 +42,9 @@ export class UpdateFixedPriceDto {
   @IsNotEmpty()
   @IsString()
   uniqueIdPrice: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  gracePeriod: number;
 }

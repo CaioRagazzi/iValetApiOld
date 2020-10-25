@@ -41,4 +41,9 @@ export class InsertPriceDto {
   @IsNotEmpty()
   @IsString()
   uniqueIdPrice: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  gracePeriod: number;
 }

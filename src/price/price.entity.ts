@@ -58,4 +58,9 @@ export class Price {
   @IsString()
   @Column({ nullable: false })
   uniqueIdPrice: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @Column({ default: 0 })
+  gracePeriod: number;
 }

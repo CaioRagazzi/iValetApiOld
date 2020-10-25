@@ -45,6 +45,7 @@ export class PriceService {
           weekDay: price.weekDay,
           uniqueIdPrice: price.uniqueIdPrice,
           maxPriceValue: price.maxPriceValue,
+          gracePeriod: price.gracePeriod,
         },
       ])
       .execute();
@@ -152,6 +153,7 @@ export class PriceService {
         to: priceDto.to,
         from: priceDto.from,
         maxPriceValue: priceDto.maxValue,
+        gracePeriod: priceDto.gracePeriod
       })
       .where('id = :id', { id: priceId })
       .andWhere('uniqueIdPrice = :uniqueIdPrice', {
