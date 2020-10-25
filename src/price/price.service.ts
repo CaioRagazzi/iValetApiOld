@@ -48,9 +48,9 @@ export class PriceService {
           gracePeriod: price.gracePeriod,
         },
       ])
-      .execute();
+      .execute();      
 
-    return result.generatedMaps;
+    return result.identifiers;
   }
 
   async getPrices(companyId: number): Promise<Price[]> {
