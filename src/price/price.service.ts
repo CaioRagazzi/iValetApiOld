@@ -171,4 +171,14 @@ export class PriceService {
 
     return result;
   }
+
+  async deletePriceByUniqueId(uniqueIdPrice: number): Promise<DeleteResult> {
+    const result = await this.priceRepository
+      .createQueryBuilder()
+      .delete()
+      .where('uniqueIdPrice = :uniqueIdPrice', { uniqueIdPrice })
+      .execute();
+
+    return result;
+  }
 }

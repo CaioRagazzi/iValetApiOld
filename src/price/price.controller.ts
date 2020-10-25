@@ -87,4 +87,16 @@ export class PriceController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Delete('uniqueId')
+  async DeletePriceUniqueId(
+    @Query('uniqueId') uniqueId: number,
+  ): Promise<DeleteResult> {
+    try {
+      const result = await this.priceService.deletePriceByUniqueId(uniqueId);
+      return result;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }
