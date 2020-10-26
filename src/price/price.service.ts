@@ -48,7 +48,7 @@ export class PriceService {
           gracePeriod: price.gracePeriod,
         },
       ])
-      .execute();      
+      .execute();
 
     return result.identifiers;
   }
@@ -76,6 +76,19 @@ export class PriceService {
     const prices = await this.priceRepository
       .createQueryBuilder()
       .where('uniqueIdPrice = :uniqueIdPrice', { uniqueIdPrice })
+      .getMany();
+
+    return prices;
+  }
+
+  async getPriceByWeekday(
+    weekday: string,
+    companyId: number,
+  ): Promise<Price[]> {
+    const prices = await this.priceRepository
+      .createQueryBuilder()
+      .where('weekDay like :weekDay', { weekDay: `%${weekday}%` })
+      .andWhere('companyId = :companyId', { companyId })
       .getMany();
 
     return prices;
@@ -153,7 +166,7 @@ export class PriceService {
         to: priceDto.to,
         from: priceDto.from,
         maxPriceValue: priceDto.maxValue,
-        gracePeriod: priceDto.gracePeriod
+        gracePeriod: priceDto.gracePeriod,
       })
       .where('id = :id', { id: priceId })
       .andWhere('uniqueIdPrice = :uniqueIdPrice', {

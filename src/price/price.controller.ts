@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { DeleteResult, ObjectLiteral } from 'typeorm';
+import { GetPriceWeekdayDto } from './dto/get-price-weekday.dto';
 import { InsertPriceDto } from './dto/insert-price.dto';
 import { UpdateFixedPriceDto } from './dto/update-fixed-price.dto';
 import { PriceService } from './price.service';
@@ -52,6 +53,24 @@ export class PriceController {
   ): Promise<ObjectLiteral> {
     try {
       const result = await this.priceService.getPriceByUniqueId(uniqueId);
+
+      return result;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('week/day')
+  async GetPriceByWeekday(
+    @Query() request: GetPriceWeekdayDto,
+  ): Promise<ObjectLiteral> {
+    try {
+      console.log('oi');
+      
+      const result = await this.priceService.getPriceByWeekday(
+        request.weekday,
+        +request.companyId,
+      );
 
       return result;
     } catch (error) {
