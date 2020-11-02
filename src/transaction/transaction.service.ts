@@ -88,6 +88,10 @@ export class TransactionService {
   async getFinishedByCompanyId(companyId: number): Promise<Transaction[]> {
     const caixa = await this.caixaService.getOpenedCaixaByCompany(companyId);
 
+    if (!caixa) {
+      throw new Error('Theres no caixa opened!');
+    }
+
     const transactions = await this.transactionRepository
       .createQueryBuilder()
       .select('id, placa, endDate, startDate')
@@ -141,11 +145,16 @@ export class TransactionService {
   }
 
   async emitFinishedTransactions(companyId: number): Promise<void> {
-    const transactions = await this.getFinishedByCompanyId(companyId);
+    let transactions: Transaction[];
+    try {
+      transactions = await this.getFinishedByCompanyId(companyId);
 
-    this.transactionGateway.sendFinishedTransactionsMessage(
-      companyId,
-      transactions,
-    );
+      this.transactionGateway.sendFinishedTransactionsMessage(
+        companyId,
+        transactions,
+      );
+    } catch (error) {
+      
+    }
   }
 }
