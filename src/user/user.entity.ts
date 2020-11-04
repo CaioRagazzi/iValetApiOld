@@ -5,11 +5,13 @@ import {
   Index,
   OneToMany,
   ManyToOne,
+  OneToOne,
 } from 'typeorm';
 import { IsDate, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { Company } from '../company/company.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Perfil } from '../perfil/perfil.entity';
+import { Customer } from '../customer/customer.entity';
 
 @Entity()
 export class User {
