@@ -3,7 +3,6 @@ import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { InsertTransactionDto } from './dto/insert-transaction.dto';
 import { CompanyService } from '../company/company.service';
-import { TransactionGateway } from '../gateway/transaction.gateway';
 import { CaixaService } from '../caixa/caixa.service';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -13,7 +12,6 @@ export class TransactionService {
     @InjectRepository(Transaction)
     private transactionRepository: Repository<Transaction>,
     private companyService: CompanyService,
-    private transactionGateway: TransactionGateway,
     private caixaService: CaixaService,
   ) {}
 
@@ -41,8 +39,7 @@ export class TransactionService {
       const transactionRe = await this.transactionRepository.insert(
         transactionInst,
       );
-
-      this.emitOpenedTransactions(company.id);
+      
       return transactionRe;
     } catch (error) {
       return error;
@@ -128,33 +125,6 @@ export class TransactionService {
       .where('id = :transactionId', { transactionId })
       .execute();
 
-    if (response.affected > 0) {
-      this.emitFinishedTransactions(companyId);
-      this.emitOpenedTransactions(companyId);
-    }
-
     return response;
-  }
-
-  async emitOpenedTransactions(companyId: number): Promise<void> {
-    const transactions = await this.getOpenedByCompanyId(companyId);
-    this.transactionGateway.sendOpenedTransactionsMessage(
-      companyId,
-      transactions,
-    );
-  }
-
-  async emitFinishedTransactions(companyId: number): Promise<void> {
-    let transactions: Transaction[];
-    try {
-      transactions = await this.getFinishedByCompanyId(companyId);
-
-      this.transactionGateway.sendFinishedTransactionsMessage(
-        companyId,
-        transactions,
-      );
-    } catch (error) {
-      
-    }
   }
 }

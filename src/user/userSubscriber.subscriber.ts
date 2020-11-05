@@ -18,6 +18,8 @@ import {
     }
 
     afterInsert(event: InsertEvent<any>): void{
-        this.customerService.addCustomer(event.entity)
+        if (event.entity.perfil.id === 2) {
+          this.customerService.addCustomer(event.entity)
+        }
     }
   }
