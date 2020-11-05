@@ -17,7 +17,7 @@ import { MonthlyCustomer } from 'src/monthlyCustomer/monthlyCustomer.entity';
     id: number;
 
     @ApiProperty()
-    @Column({ length: 100, nullable: false })
+    @Column({ length: 100, nullable: true })
     placa: string;
 
     @ApiProperty()

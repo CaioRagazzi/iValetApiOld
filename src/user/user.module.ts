@@ -5,10 +5,12 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm/dist';
 import { User } from './user.entity';
+import { CustomerModule } from 'src/customer/customer.module';
+import { UserSubscriber } from './userSubscriber.subscriber';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]),SendEmailModule, PerfilModule],
-  providers: [UserService],
+  imports: [TypeOrmModule.forFeature([User]),SendEmailModule, PerfilModule, CustomerModule],
+  providers: [UserService, UserSubscriber],
   exports: [UserService],
   controllers: [UserController],
 })

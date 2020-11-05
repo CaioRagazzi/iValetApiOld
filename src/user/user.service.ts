@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InsertResult, Repository, UpdateResult } from 'typeorm';
+import { AfterInsert, InsertResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
 import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { UserUpdateDto } from './dto/update-user.dto';
@@ -16,6 +16,7 @@ import {
 } from 'date-fns';
 import { PerfilService } from '../perfil/perfil.service';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CustomerService } from 'src/customer/customer.service';
 
 @Injectable()
 export class UserService {
@@ -24,6 +25,7 @@ export class UserService {
     private userRepository: Repository<User>,
     private sendEmailService: SendEmailService,
     private perfilService: PerfilService,
+    private customerService: CustomerService,
   ) {}
 
   async findOneByEmail(email: string): Promise<User | undefined> {
@@ -48,7 +50,15 @@ export class UserService {
     const perfil = await this.perfilService.get(user.perfil);
     userInst.perfil = perfil;
 
-    return this.userRepository.insert(userInst);
+    const insertedResult =  await this.userRepository.insert(userInst);
+    // console.log(insertedResult.identifiers);
+    
+    // if (user.perfil === 2) {
+    //   this.customerService.addCustomer(userInst);
+    // }
+
+    return insertedResult;
+
   }
 
   async update(userId: number, user: UserUpdateDto): Promise<UpdateResult> {
