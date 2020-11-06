@@ -49,7 +49,7 @@ export class Price {
   @ManyToOne(
     type => Company,
     company => company.transaction,
-    { nullable: false, eager: true },
+    { nullable: false },
   )
   @JoinColumn()
   company: Company;
