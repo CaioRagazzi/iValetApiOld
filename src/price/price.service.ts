@@ -62,12 +62,15 @@ export class PriceService {
         'uniqueIdPrice',
         'companyId',
         'type',
-        'maxPriceValue',
       ])
       .groupBy('uniqueIdPrice')
-      .addGroupBy('maxPriceValue')
       .having('companyId = :companyId', { companyId })
       .getRawMany();
+
+      await Promise.all(prices.map(async item => {
+        const prices = await this.getPriceByUniqueId(item.uniqueIdPrice)
+        item['prices'] = prices;
+      }))
 
     return prices;
   }
