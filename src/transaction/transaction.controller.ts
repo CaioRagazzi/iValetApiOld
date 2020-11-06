@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ObjectLiteral, UpdateResult } from 'typeorm';
+import { ObjectLiteral } from 'typeorm';
 import { FinishTransactionDto } from './dto/finish-transaction.dto';
 import { InsertTransactionDto } from './dto/insert-transaction.dto';
 import { Transaction } from './transaction.entity';
@@ -66,11 +66,10 @@ export class TransactionController {
   @Put('finish')
   async finish(
     @Query() finishTransactionDto: FinishTransactionDto,
-  ): Promise<UpdateResult> {
+  ): Promise<Transaction> {
     try {
       const transaction = await this.transactionService.finishTransaction(
         finishTransactionDto.transactionId,
-        finishTransactionDto.companyId,
       );
 
       return transaction;

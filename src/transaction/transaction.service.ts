@@ -102,13 +102,9 @@ export class TransactionService {
 
   async finishTransaction(
     transactionId: number,
-    companyId: number,
-  ): Promise<UpdateResult> {
-    const transaction = await this.transactionRepository
-      .createQueryBuilder()
-      .select('*')
-      .where('id = :transactionId', { transactionId })
-      .getRawOne();
+  ): Promise<Transaction> {
+    
+    const transaction = await this.transactionRepository.findOne(transactionId);
 
     if (!transaction) {
       throw new Error('Transactions does not exists');
@@ -118,13 +114,10 @@ export class TransactionService {
       throw new Error('Transactions already finished');
     }
 
-    const response = await this.transactionRepository
-      .createQueryBuilder()
-      .update()
-      .set({ endDate: new Date() })
-      .where('id = :transactionId', { transactionId })
-      .execute();
+    transaction.endDate = new Date();
 
+    const response = await this.transactionRepository.save(transaction);
+    
     return response;
   }
 }

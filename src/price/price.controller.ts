@@ -64,9 +64,7 @@ export class PriceController {
   async GetPriceByWeekday(
     @Query() request: GetPriceWeekdayDto,
   ): Promise<ObjectLiteral> {
-    try {
-      console.log('oi');
-      
+    try {      
       const result = await this.priceService.getPriceByWeekday(
         request.weekday,
         +request.companyId,

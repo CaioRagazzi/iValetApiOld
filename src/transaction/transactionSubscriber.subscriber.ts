@@ -1,5 +1,4 @@
 import { TransactionGateway } from 'src/gateway/transaction.gateway';
-import { UserService } from 'src/user/user.service';
 import {
     Connection,
     EntitySubscriberInterface,
@@ -19,19 +18,18 @@ import { TransactionService } from './transaction.service';
       return Transaction;
     }
 
-    afterInsert(event: InsertEvent<any>): void{
-        console.log();
-        
-        this.emitOpenedTransactions(event.entity.company.id);
+    afterInsert(event: InsertEvent<any>): void{        
+      this.emitOpenedTransactions(event.entity.company.id);
     }
 
     afterUpdate(event: InsertEvent<any>): void {
-        this.emitFinishedTransactions(event.entity.company.id);
+      this.emitFinishedTransactions(event.entity.company.id);
       this.emitOpenedTransactions(event.entity.company.id);
     }
 
     async emitOpenedTransactions(companyId: number): Promise<void> {
         const transactions = await this.transactionService.getOpenedByCompanyId(companyId);
+        
         this.transactionGateway.sendOpenedTransactionsMessage(
           companyId,
           transactions,

@@ -5,8 +5,4 @@ export class FinishTransactionDto {
   @ApiProperty()
   @IsNotEmpty()
   transactionId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  companyId: number;
 }
