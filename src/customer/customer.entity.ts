@@ -5,12 +5,14 @@ import {
     OneToOne,
     JoinColumn,
     OneToMany,
+    Unique,
   } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../user/user.entity';
 import { MonthlyCustomer } from 'src/monthlyCustomer/monthlyCustomer.entity';
   
   @Entity()
+  @Unique(["placa"])
   export class Customer {
     @ApiProperty()
     @PrimaryGeneratedColumn()
@@ -35,6 +37,10 @@ import { MonthlyCustomer } from 'src/monthlyCustomer/monthlyCustomer.entity';
     @ApiProperty()
     @Column({ length: 100, nullable: true })
     modelo: string;
+
+    @ApiProperty()
+    @Column({ length: 100, nullable: true })
+    email: string;
 
     @OneToOne(() => User)
     @JoinColumn()

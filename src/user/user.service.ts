@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AfterInsert, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { InsertResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
 import { genSaltSync, hashSync, compareSync } from 'bcryptjs';
 import { UserUpdateDto } from './dto/update-user.dto';
@@ -51,11 +51,6 @@ export class UserService {
     userInst.perfil = perfil;
 
     const insertedResult =  await this.userRepository.insert(userInst);
-    // console.log(insertedResult.identifiers);
-    
-    // if (user.perfil === 2) {
-    //   this.customerService.addCustomer(userInst);
-    // }
 
     return insertedResult;
 
