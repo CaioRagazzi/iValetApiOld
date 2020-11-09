@@ -18,7 +18,9 @@ import { Price } from './price/price.entity';
 import { CustomerModule } from './customer/customer.module';
 import { Customer } from './customer/customer.entity';
 import { MonthlyCustomerModule } from './monthlyCustomer/monthlyCustomer.module';
+import { MonthlyPricesModule } from './monthlyPrices/monthlyPrices.module';
 import { MonthlyCustomer } from './monthlyCustomer/monthlyCustomer.entity';
+import { MonthlyPrices } from './monthlyPrices/monthlyPrices.entity';
 
 @Module({
   imports: [
@@ -29,7 +31,7 @@ import { MonthlyCustomer } from './monthlyCustomer/monthlyCustomer.entity';
       username: process.env.USER_NAME,
       password: process.env.USER_PASSWORD,
       database: process.env.DATABASE,
-      entities: [User, Company, Transaction, Caixa, Perfil, Price, Customer, MonthlyCustomer],
+      entities: [User, Company, Transaction, Caixa, Perfil, Price, Customer, MonthlyCustomer, MonthlyPrices],
       synchronize: true,
     }),
     UserModule,
@@ -43,6 +45,7 @@ import { MonthlyCustomer } from './monthlyCustomer/monthlyCustomer.entity';
     PriceModule,
     CustomerModule,
     MonthlyCustomerModule,
+    MonthlyPricesModule,
   ],
 })
 export class AppModule {}

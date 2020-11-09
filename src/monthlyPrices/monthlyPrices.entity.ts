@@ -1,0 +1,35 @@
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { Company } from '../company/company.entity';
+import { IsDecimal, IsNotEmpty, IsString } from 'class-validator';
+
+@Entity()
+export class MonthlyPrices {
+  @ApiProperty()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(
+    () => Company,
+    company => company.id,
+    { nullable: false, eager: true },
+  )
+  company: Company;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @Column("decimal", { precision: 5, scale: 2 })
+  valor: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @Column({ length: 500 })
+  nome: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @Column({ length: 500 })
+  descricao: string;
+}
