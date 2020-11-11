@@ -16,7 +16,6 @@ import {
 } from 'date-fns';
 import { PerfilService } from '../perfil/perfil.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CustomerService } from 'src/customer/customer.service';
 
 @Injectable()
 export class UserService {
@@ -25,7 +24,6 @@ export class UserService {
     private userRepository: Repository<User>,
     private sendEmailService: SendEmailService,
     private perfilService: PerfilService,
-    private customerService: CustomerService,
   ) {}
 
   async findOneByEmail(email: string): Promise<User | undefined> {

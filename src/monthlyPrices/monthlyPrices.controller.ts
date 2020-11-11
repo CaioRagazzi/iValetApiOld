@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Param,
@@ -18,14 +19,14 @@ import { MonthlyPricesService } from './monthlyPrices.service';
 @Controller('MonthlyPrices')
 @UseGuards(AuthGuard('jwt'))
 export class MonthlyPricesController {
-  constructor(private monthlyCustomerService: MonthlyPricesService) {}
+  constructor(private monthlyPricesService: MonthlyPricesService) {}
 
   @Post()
   async create(
     @Body() monthlyPrices: MonthlyPricesCreateDto,
   ): Promise<ObjectLiteral> {
     try {
-      const createdMonthlyPrice = await this.monthlyCustomerService.create(
+      const createdMonthlyPrice = await this.monthlyPricesService.create(
         monthlyPrices,
       );
 
@@ -41,12 +42,22 @@ export class MonthlyPricesController {
     @Param('monthlyPriceId') monthlyPriceId: number,
   ): Promise<MonthlyPrices> {
     try {
-      const updatedMonthlyPrice = await this.monthlyCustomerService.update(
+      const updatedMonthlyPrice = await this.monthlyPricesService.update(
         monthlyPrices,
         monthlyPriceId,
       );
 
       return updatedMonthlyPrice;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get(':companyId')
+  async get(@Param('companyId') companyId: number): Promise<MonthlyPrices[]> {
+    try {
+      const monthlyPrices = await this.monthlyPricesService.get(companyId);
+      return monthlyPrices;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

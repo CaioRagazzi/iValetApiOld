@@ -25,11 +25,11 @@ export class MonthlyPrices {
   @IsNotEmpty()
   @IsString()
   @Column({ length: 500 })
-  nome: string;
+  name: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @Column({ length: 500 })
-  descricao: string;
+  description: string;
 }
