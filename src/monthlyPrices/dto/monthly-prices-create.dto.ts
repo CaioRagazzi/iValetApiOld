@@ -5,7 +5,7 @@ export class MonthlyPricesCreateDto {
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
-    valor: string;
+    price: string;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -15,9 +15,9 @@ export class MonthlyPricesCreateDto {
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
-    nome: string;
+    name: string;
 
     @ApiProperty()
     @IsString()
-    descricao: string;
+    description: string;
 }

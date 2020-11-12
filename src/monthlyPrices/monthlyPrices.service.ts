@@ -23,9 +23,9 @@ export class MonthlyPricesService {
 
     const monthlyPrices = new MonthlyPrices();
 
-    monthlyPrices.description = montlyPriceDto.descricao;
-    monthlyPrices.name = montlyPriceDto.nome;
-    monthlyPrices.valor = parseFloat(montlyPriceDto.valor);
+    monthlyPrices.description = montlyPriceDto.description;
+    monthlyPrices.name = montlyPriceDto.name;
+    monthlyPrices.price = parseFloat(montlyPriceDto.price);
     monthlyPrices.company = company;
 
     const createdCompany = await this.monthlyPricesRepository.insert(monthlyPrices);
@@ -50,7 +50,7 @@ export class MonthlyPricesService {
     }
 
     if (montlyPriceDto.valor) {
-        monthlyPriceReturn.valor = parseFloat(montlyPriceDto.valor)
+        monthlyPriceReturn.price = parseFloat(montlyPriceDto.valor)
     }
 
     const updatedMonthlyPrice = await this.monthlyPricesRepository.save(monthlyPriceReturn);

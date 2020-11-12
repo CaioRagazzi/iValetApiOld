@@ -19,7 +19,7 @@ export class MonthlyPrices {
   @ApiProperty()
   @IsNotEmpty()
   @Column("decimal", { precision: 5, scale: 2 })
-  valor: number;
+  price: number;
 
   @ApiProperty()
   @IsNotEmpty()
