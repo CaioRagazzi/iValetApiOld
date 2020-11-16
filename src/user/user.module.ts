@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { PerfilModule } from '../perfil/perfil.module';
 import { SendEmailModule } from '../sendEmail/sendEmail.module';
 import { UserController } from './user.controller';
@@ -9,7 +9,7 @@ import { CustomerModule } from 'src/customer/customer.module';
 import { UserSubscriber } from './userSubscriber.subscriber';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]),SendEmailModule, PerfilModule, CustomerModule],
+  imports: [TypeOrmModule.forFeature([User]),SendEmailModule, PerfilModule, CustomerModule, HttpModule],
   providers: [UserService, UserSubscriber],
   exports: [UserService],
   controllers: [UserController],
