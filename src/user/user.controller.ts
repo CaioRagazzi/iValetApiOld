@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  forwardRef,
   Get,
   HttpException,
   HttpService,
   HttpStatus,
+  Inject,
   Param,
   Post,
   Put,
@@ -18,10 +20,11 @@ import { UpdateResult } from 'typeorm';
 import { UserInsertDto } from './dto/insert-user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserCompanyInsertDto } from './dto/insert-user-company.dto';
+import { CompanyService } from 'src/company/company.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService, private companyService: CompanyService) {}
 
   @Post()
   async create(@Body() user: UserInsertDto): Promise<any> {
@@ -48,28 +51,12 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @Get(':userId')
   async GetById(@Param('userId') userId: number): Promise<User> {
-    let userReturn;    
+    let userReturn;
     await this.httpService
       .get(`http://localhost:3000/user/${userId}`)
       .toPromise()
       .then(async res => {
         userReturn = res.data;
-        
-        await Promise.all(userReturn.companies.map(async item => {
-          await this.httpService
-            .get(`http://localhost:3002/company/${item.companyId}`)
-            .toPromise()
-            .then(res => {
-              item.companyName = res.data.name;
-              delete item.id
-            })
-            .catch(err => {
-              throw new HttpException(
-                err.response.data,
-                HttpStatus.BAD_REQUEST,
-              );
-            });
-        }));        
       })
       .catch(err => {
         throw new HttpException(err, HttpStatus.BAD_REQUEST);
@@ -148,33 +135,21 @@ export class UserController {
   async sendEmailForgotPassword(
     @Body() message: SendEmailForgotPasswordDto,
   ): Promise<void> {
-    let userReturn;
-    await this.httpService
-      .get(`http://localhost:3000/user/email/me`, {
-        params: { email: message.to },
-      })
-      .toPromise()
-      .then(res => {
-        userReturn = res.data;
-      })
-      .catch(err => {
-        throw new HttpException(err.response.data, HttpStatus.BAD_REQUEST);
-      });
-
+    let response;
     await this.httpService
       .post(`http://localhost:3001/sendemailforgotpassword`, {
-        to: userReturn.email,
-        subject: 'esqueci a senha',
-        userId: userReturn.id,
-        userName: userReturn.name,
+        to: message.to,
       })
       .toPromise()
       .then(res => {
-        console.log(res.data);
+        response = res.data;
       })
       .catch(err => {
+        console.log(err);
+
         throw new HttpException(err.response.data, HttpStatus.BAD_REQUEST);
       });
+    return response;
   }
 
   @Post('addUserAndCompany')
@@ -208,6 +183,7 @@ export class UserController {
         userReturn = res.data;
       })
       .catch(err => {
+        this.companyService.deleteById(companyId);
         throw new HttpException(err.response.data, HttpStatus.BAD_REQUEST);
       });
 

@@ -40,7 +40,6 @@ export class AuthService {
       email: user.email,
       idPerfil: user.perfil,
     };
-    console.log(payload);
     
     return {
       access_token: this.jwtService.sign(payload),

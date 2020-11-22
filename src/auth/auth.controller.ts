@@ -13,9 +13,8 @@ export class AuthController {
 
   @UseGuards(AuthGuard('local'))
   @Post()
-  async login(@Body() user: UserLoginDto): Promise<{ access_token: string }> {
-    let userReturn;
-
+  async login(@Body() user: UserLoginDto): Promise<{ access_token: string }> {    
+    let userReturn;    
     await this.httpService
       .get(`http://localhost:3000/user/email/me`, {
         params: { email: user.username },
