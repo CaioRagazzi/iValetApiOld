@@ -50,15 +50,7 @@ export class CaixaController {
   async getOpenedCaixa(@Param('companyId') companyId: number): Promise<Caixa> {
     try {
       const caixa = await this.caixaService.getOpenedCaixaByCompany(companyId);
-
-      if (caixa) {
-        return caixa;
-      } else {
-        throw new HttpException(
-          'Theres no opened Caixa',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      return caixa;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

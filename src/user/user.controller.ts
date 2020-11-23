@@ -152,38 +152,24 @@ export class UserController {
     return response;
   }
 
-  @Post('addUserAndCompany')
+  @Post('createUserCompany')
   async addUserAndCompany(
     @Body() userCompany: UserCompanyInsertDto,
   ): Promise<void> {
-    let companyId: number;
-    await this.httpService
-      .post('http://localhost:3002/company', {
-        name: userCompany.companyName,
-      })
-      .toPromise()
-      .then(res => {
-        companyId = res.data.id;
-      })
-      .catch(err => {
-        throw new HttpException(err.response.data, HttpStatus.BAD_REQUEST);
-      });
-
     let userReturn;
     await this.httpService
-      .post('http://localhost:3000/user', {
+      .post('http://localhost:3000/user/createUserCompany', {
         name: userCompany.name,
         password: userCompany.password,
         email: userCompany.email,
         perfil: userCompany.perfil,
-        companyId: [companyId],
+        companyName: userCompany.companyName,
       })
       .toPromise()
       .then(res => {
         userReturn = res.data;
       })
       .catch(err => {
-        this.companyService.deleteById(companyId);
         throw new HttpException(err.response.data, HttpStatus.BAD_REQUEST);
       });
 
