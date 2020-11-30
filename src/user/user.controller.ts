@@ -1,12 +1,10 @@
 import {
   Body,
   Controller,
-  forwardRef,
   Get,
   HttpException,
   HttpService,
   HttpStatus,
-  Inject,
   Param,
   Post,
   Put,
@@ -20,11 +18,14 @@ import { UpdateResult } from 'typeorm';
 import { UserInsertDto } from './dto/insert-user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserCompanyInsertDto } from './dto/insert-user-company.dto';
-import { CompanyService } from 'src/company/company.service';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private httpService: HttpService, private companyService: CompanyService) {}
+  constructor(
+    private httpService: HttpService,
+    private userService: UserService,
+  ) {}
 
   @Post()
   async create(@Body() user: UserInsertDto): Promise<any> {
@@ -35,7 +36,6 @@ export class UserController {
         password: user.password,
         email: user.email,
         perfil: user.perfil,
-        companyId: user.companyId,
       })
       .toPromise()
       .then(res => {
@@ -134,22 +134,10 @@ export class UserController {
   @Post('SendEmailForgotPassword')
   async sendEmailForgotPassword(
     @Body() message: SendEmailForgotPasswordDto,
-  ): Promise<void> {
-    let response;
-    await this.httpService
-      .post(`http://localhost:3001/sendemailforgotpassword`, {
-        to: message.to,
-      })
-      .toPromise()
-      .then(res => {
-        response = res.data;
-      })
-      .catch(err => {
-        console.log(err);
+  ): Promise<{ message: string }> {
+    this.userService.publishToKafka(message.to);
 
-        throw new HttpException(err.response.data, HttpStatus.BAD_REQUEST);
-      });
-    return response;
+    return { message: 'E-mail sent!' };
   }
 
   @Post('createUserCompany')
@@ -158,7 +146,7 @@ export class UserController {
   ): Promise<void> {
     let userReturn;
     await this.httpService
-      .post('http://localhost:3000/user/createUserCompany', {
+      .post('http://localhost:3000/usercompany/createUserCompany', {
         name: userCompany.name,
         password: userCompany.password,
         email: userCompany.email,

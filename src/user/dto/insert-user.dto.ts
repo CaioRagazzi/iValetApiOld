@@ -28,9 +28,4 @@ export class UserInsertDto {
   @IsNumber()
   @IsNotEmpty()
   perfil: number;
-
-  @ApiProperty()
-  @IsArray()
-  @IsNotEmpty()
-  companyId: number[];
 }

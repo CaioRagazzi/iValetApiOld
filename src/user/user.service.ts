@@ -16,6 +16,8 @@ import {
 } from 'date-fns';
 import { PerfilService } from '../perfil/perfil.service';
 import { InjectRepository } from '@nestjs/typeorm';
+import { connect } from 'amqplib';
+import { Kafka } from 'kafkajs';
 
 @Injectable()
 export class UserService {
@@ -27,12 +29,18 @@ export class UserService {
   ) {}
 
   async findOneByEmail(email: string): Promise<User | undefined> {
-    const user = this.userRepository.findOne({ where: { email: email }, relations: ['company', 'perfil'] });
+    const user = this.userRepository.findOne({
+      where: { email: email },
+      relations: ['company', 'perfil'],
+    });
     return user;
   }
 
   async findOneById(id: number): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { id: id }, relations: ['company', 'perfil'] });
+    return this.userRepository.findOne({
+      where: { id: id },
+      relations: ['company', 'perfil'],
+    });
   }
 
   async findAll(): Promise<User[]> {
@@ -48,10 +56,9 @@ export class UserService {
     const perfil = await this.perfilService.get(user.perfil);
     userInst.perfil = perfil;
 
-    const insertedResult =  await this.userRepository.insert(userInst);
+    const insertedResult = await this.userRepository.insert(userInst);
 
     return insertedResult;
-
   }
 
   async update(userId: number, user: UserUpdateDto): Promise<UpdateResult> {
@@ -134,5 +141,25 @@ export class UserService {
     } else {
       return false;
     }
+  }
+
+  async publishToKafka(email: string): Promise<void> {
+    const kafka = new Kafka({
+      clientId: 'i-valet-api',
+      brokers: ['localhost:9092'],
+    });
+
+    const forgotEmailInterface = {
+      to: email
+    }
+
+    const producer = kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'send_forgot_email',
+      messages: [{ key: 'forgot_email', value: JSON.stringify(forgotEmailInterface) }],
+    });
+
+    await producer.disconnect();
   }
 }
