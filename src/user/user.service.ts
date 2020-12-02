@@ -109,7 +109,7 @@ export class UserService {
     this.sendEmailService.sendEmail(to, subject, text.toString());
   }
 
-  private hashPassword(password: string): string {
+  public hashPassword(password: string): string {
     const salt = genSaltSync(10);
     const hash = hashSync(password, salt);
 

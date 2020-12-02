@@ -12,6 +12,7 @@ import { Company } from '../company/company.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Perfil } from '../perfil/perfil.entity';
 import { Customer } from '../customer/customer.entity';
+import { UserCompany } from 'src/userCompany/userCompany.entity';
 
 @Entity()
 export class User {
@@ -42,13 +43,19 @@ export class User {
   @IsDate()
   @IsNotEmpty()
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
-  createdOn: Date;
+  createdAt: Date;
+
+  @ApiProperty()
+  @IsDate()
+  @IsNotEmpty()
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
+  updatedAt: Date;
 
   @OneToMany(
-    type => Company,
-    company => company.user,
+    type => UserCompany,
+    userCompany => userCompany.userId,
   )
-  company: Company[];
+  companies: UserCompany[];
 
   @ManyToOne(
     type => Perfil,
