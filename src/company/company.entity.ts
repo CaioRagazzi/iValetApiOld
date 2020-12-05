@@ -6,14 +6,15 @@ import {
   Unique,
   OneToMany,
 } from 'typeorm';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsDate, IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { User } from '../user/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transaction } from '../transaction/transaction.entity';
 import { Caixa } from '../caixa/caixa.entity';
+import { UserCompany } from 'src/userCompany/userCompany.entity';
 
 @Entity()
-@Unique('UQ_NAMES', ['name', 'user'])
+// @Unique('UQ_NAMES', ['name', 'user'])
 export class Company {
   @ApiProperty()
   @PrimaryGeneratedColumn()
@@ -25,13 +26,23 @@ export class Company {
   @Column({ length: 500 })
   name: string;
 
+  @ApiProperty()
+  @IsDate()
   @IsNotEmpty()
-  @IsInt()
-  @ManyToOne(
-    () => User,
-    user => user.company,
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
+  createdAt: Date;
+
+  @ApiProperty()
+  @IsDate()
+  @IsNotEmpty()
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
+  updatedAt: Date;
+
+  @OneToMany(
+    () => UserCompany,
+    userCompany => userCompany.company,
   )
-  user: User;
+  users: UserCompany[];
 
   @OneToMany(
     () => Transaction,

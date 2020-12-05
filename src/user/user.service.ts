@@ -29,18 +29,12 @@ export class UserService {
   ) {}
 
   async findOneByEmail(email: string): Promise<User | undefined> {
-    const user = this.userRepository.findOne({
-      where: { email: email },
-      relations: ['company', 'perfil'],
-    });
+    const user = this.userRepository.findOne({ where: { email: email } });
     return user;
   }
 
   async findOneById(id: number): Promise<User | undefined> {
-    return this.userRepository.findOne({
-      where: { id: id },
-      relations: ['company', 'perfil'],
-    });
+    return this.userRepository.findOne(id);
   }
 
   async findAll(): Promise<User[]> {
@@ -116,7 +110,7 @@ export class UserService {
     this.sendEmailService.sendEmail(to, subject, text.toString());
   }
 
-  private hashPassword(password: string): string {
+  public hashPassword(password: string): string {
     const salt = genSaltSync(10);
     const hash = hashSync(password, salt);
 

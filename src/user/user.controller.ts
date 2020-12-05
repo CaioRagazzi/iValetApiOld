@@ -19,12 +19,16 @@ import { UserInsertDto } from './dto/insert-user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserCompanyInsertDto } from './dto/insert-user-company.dto';
 import { UserService } from './user.service';
+import { CompanyService } from 'src/company/company.service';
+import { UserGetResponsetDto } from './dto/get-user-response.dto';
+import { UserCompanyService } from 'src/userCompany/userCompany.service';
 
 @Controller('user')
 export class UserController {
   constructor(
-    private httpService: HttpService,
     private userService: UserService,
+    private companyService: CompanyService,
+    private userCompanyService: UserCompanyService,
   ) {}
 
   @Post()
@@ -50,36 +54,35 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':userId')
-  async GetById(@Param('userId') userId: number): Promise<User> {
-    let userReturn;
-    await this.httpService
-      .get(`http://localhost:3000/user/${userId}`)
-      .toPromise()
-      .then(async res => {
-        userReturn = res.data;
-      })
-      .catch(err => {
-        throw new HttpException(err, HttpStatus.BAD_REQUEST);
-      });
+  async GetById(@Param('userId') userId: number): Promise<any> {
+    try {
+      const user = await this.userService.findOneById(userId);
 
-    return userReturn;
-  }
+      const result = {
+        ...user,
+        companies: [],
+      };
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('email/me')
-  async GetByEmail(@Query('email') email: string): Promise<User> {
-    let userReturn;
-    await this.httpService
-      .get(`http://localhost:3000/user/email/me`, { params: { email: email } })
-      .toPromise()
-      .then(res => {
-        userReturn = res.data;
-      })
-      .catch(err => {
-        throw new HttpException(err.response.data, HttpStatus.BAD_REQUEST);
-      });
+      if (user.perfil.name === 'company') {
+        const userCompany = await this.userCompanyService.findOneByUserId(
+          user.id,
+        );
+        await Promise.all(userCompany.map(async usrComp => {          
+          const company = await this.companyService.findOneById(
+            +usrComp.company,
+          );
+          result.companies.push(company);
+        }));
+      }
 
-    return userReturn;
+      return result;
+    } catch (error) {
+      if (error.sqlMessage === 'User not found') {
+        throw new HttpException(error.sqlMessage, HttpStatus.NO_CONTENT);
+      } else {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
+    }
   }
 
   @UseGuards(AuthGuard('jwt'))

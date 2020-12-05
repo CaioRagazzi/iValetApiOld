@@ -6,12 +6,20 @@ import {
   OneToMany,
   ManyToOne,
   OneToOne,
+  JoinTable,
 } from 'typeorm';
-import { IsDate, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsDate,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import { Company } from '../company/company.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Perfil } from '../perfil/perfil.entity';
 import { Customer } from '../customer/customer.entity';
+import { UserCompany } from 'src/userCompany/userCompany.entity';
 
 @Entity()
 export class User {
@@ -41,19 +49,26 @@ export class User {
   @ApiProperty()
   @IsDate()
   @IsNotEmpty()
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
-  createdOn: Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @ApiProperty()
+  @IsDate()
+  @IsNotEmpty()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 
   @OneToMany(
-    type => Company,
-    company => company.user,
+    type => UserCompany,
+    userCompany => userCompany.user,
   )
-  company: Company[];
+  companies: UserCompany[];
 
   @ManyToOne(
     type => Perfil,
     perfil => perfil.user,
-    { nullable: false },
+    { nullable: false, eager: true },
   )
+  @JoinTable()
   perfil: Perfil;
 }

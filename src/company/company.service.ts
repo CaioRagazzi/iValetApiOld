@@ -19,7 +19,6 @@ export class CompanyService {
 
     const companyInst = new Company();
     companyInst.name = company.name;
-    companyInst.user = user;
 
     return this.companyRepository.insert(companyInst);
   }
