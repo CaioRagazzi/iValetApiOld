@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '../user/user.module';
@@ -11,6 +11,7 @@ import { LocalStrategy } from './strategies/local.strategy';
   imports: [
     UserModule, 
     PassportModule,
+    HttpModule,
     JwtModule.register({
       secret: process.env.JWT_KEY,
       signOptions: { expiresIn: '60000s' },

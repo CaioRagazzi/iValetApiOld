@@ -16,6 +16,8 @@ import {
 } from 'date-fns';
 import { PerfilService } from '../perfil/perfil.service';
 import { InjectRepository } from '@nestjs/typeorm';
+import { connect } from 'amqplib';
+import { Kafka } from 'kafkajs';
 
 @Injectable()
 export class UserService {
@@ -133,5 +135,25 @@ export class UserService {
     } else {
       return false;
     }
+  }
+
+  async publishToKafka(email: string): Promise<void> {
+    const kafka = new Kafka({
+      clientId: 'i-valet-api',
+      brokers: ['localhost:9092'],
+    });
+
+    const forgotEmailInterface = {
+      to: email
+    }
+
+    const producer = kafka.producer();
+    await producer.connect();
+    await producer.send({
+      topic: 'send_forgot_email',
+      messages: [{ key: 'forgot_email', value: JSON.stringify(forgotEmailInterface) }],
+    });
+
+    await producer.disconnect();
   }
 }

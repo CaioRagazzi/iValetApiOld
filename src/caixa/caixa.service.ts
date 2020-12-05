@@ -72,6 +72,10 @@ export class CaixaService {
       .andWhere('companyId = :companyId', { companyId })
       .getOne();
 
+    if (!caixa) {
+      throw new Error('Theres no opened Caixa!');
+    }
+
     return caixa;
   }
 }

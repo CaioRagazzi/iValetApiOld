@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { InsertResult, Repository } from 'typeorm';
 import { Company } from './company.entity';
@@ -11,6 +11,7 @@ export class CompanyService {
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
     private userService: UserService,
+    private httpService: HttpService,
   ) {}
 
   async create(company: CompanyInsertDto): Promise<InsertResult> {
@@ -32,5 +33,20 @@ export class CompanyService {
     }
 
     return company;
+  }
+
+  async deleteById(companyId: number): Promise<any> {
+    let response;
+    await this.httpService
+      .delete(`http://localhost:3002/company/${companyId}`)
+      .toPromise()
+      .then(res => {
+        response = res.data;
+      })
+      .catch(err => {
+        throw new Error(err.response.data);
+      });
+
+    return response;
   }
 }
