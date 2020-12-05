@@ -17,10 +17,17 @@ import { InsertResult, UpdateResult } from 'typeorm';
 import { UserInsertDto } from './dto/insert-user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { CompanyService } from 'src/company/company.service';
+import { UserGetResponsetDto } from './dto/get-user-response.dto';
+import { UserCompanyService } from 'src/userCompany/userCompany.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private companyService: CompanyService,
+    private userCompanyService: UserCompanyService,
+  ) {}
 
   @Post()
   async create(@Body() user: UserInsertDto): Promise<InsertResult> {
@@ -34,12 +41,34 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':userId')
-  async GetById(@Param('userId') userId: number): Promise<User> {
+  async GetById(@Param('userId') userId: number): Promise<any> {
     try {
-      const userRet = await this.userService.findOneById(userId);
-      return userRet;
+      const user = await this.userService.findOneById(userId);
+
+      const result = {
+        ...user,
+        companies: [],
+      };
+
+      if (user.perfil.name === 'company') {
+        const userCompany = await this.userCompanyService.findOneByUserId(
+          user.id,
+        );
+        await Promise.all(userCompany.map(async usrComp => {          
+          const company = await this.companyService.findOneById(
+            +usrComp.company,
+          );
+          result.companies.push(company);
+        }));
+      }
+
+      return result;
     } catch (error) {
-      throw new HttpException(error.sqlMessage, HttpStatus.BAD_REQUEST);
+      if (error.sqlMessage === 'User not found') {
+        throw new HttpException(error.sqlMessage, HttpStatus.NO_CONTENT);
+      } else {
+        throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
     }
   }
 

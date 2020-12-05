@@ -27,12 +27,12 @@ export class UserService {
   ) {}
 
   async findOneByEmail(email: string): Promise<User | undefined> {
-    const user = this.userRepository.findOne({ where: { email: email }, relations: ['company', 'perfil'] });
+    const user = this.userRepository.findOne({ where: { email: email } });
     return user;
   }
 
   async findOneById(id: number): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { id: id }, relations: ['company', 'perfil'] });
+    return this.userRepository.findOne(id);
   }
 
   async findAll(): Promise<User[]> {
@@ -48,10 +48,9 @@ export class UserService {
     const perfil = await this.perfilService.get(user.perfil);
     userInst.perfil = perfil;
 
-    const insertedResult =  await this.userRepository.insert(userInst);
+    const insertedResult = await this.userRepository.insert(userInst);
 
     return insertedResult;
-
   }
 
   async update(userId: number, user: UserUpdateDto): Promise<UpdateResult> {

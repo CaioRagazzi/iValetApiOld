@@ -11,11 +11,11 @@ export class UserCompany {
     () => User,
     user => user.companies,
   )
-  userId: number;
+  user: User;
 
   @ManyToOne(
     () => Company,
-    company => company.userCompany,
+    company => company.users,
   )
-  companyId: number;
+  company: Company;
 }

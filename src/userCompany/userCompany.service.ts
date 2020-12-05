@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Company } from 'src/company/company.entity';
 import { UserCompanyInsertRequestDto } from 'src/userCompany/dto/userInsertRequest.dto';
 import { User } from 'src/user/user.entity';
@@ -14,6 +14,17 @@ export class UserCompanyService {
     private usercompanyRepository: Repository<UserCompany>,
     private userService: UserService,
   ) {}
+
+  async findOneById(userCompanyId: number): Promise<UserCompany> {
+    return await this.usercompanyRepository.findOne(userCompanyId);
+  }
+
+  async findOneByUserId(userId: number): Promise<UserCompany[]> {
+    return await this.usercompanyRepository.find({
+      where: { user: userId },
+      loadRelationIds: true
+    });
+  }
 
   async createUserCompany(userDto: UserCompanyInsertRequestDto): Promise<User> {
     const duplicateUser = await this.userService.findOneByEmail(userDto.email);
@@ -40,8 +51,8 @@ export class UserCompanyService {
       const createdCompany = await transaction.save(company);
       createdUser = await transaction.save<User>(user);
       const userCompany = new UserCompany();
-      userCompany.userId = createdUser.id;
-      userCompany.companyId = createdCompany.id;
+      userCompany.user = createdUser;
+      userCompany.company = createdCompany;
       transaction.save<UserCompany>(userCompany);
     });
 

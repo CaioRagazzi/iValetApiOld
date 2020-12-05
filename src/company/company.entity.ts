@@ -38,13 +38,11 @@ export class Company {
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
   updatedAt: Date;
 
-  @IsNotEmpty()
-  @IsInt()
-  @ManyToOne(
+  @OneToMany(
     () => UserCompany,
-    userCompany => userCompany.companyId,
+    userCompany => userCompany.company,
   )
-  userCompany: UserCompany[];
+  users: UserCompany[];
 
   @OneToMany(
     () => Transaction,
