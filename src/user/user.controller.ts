@@ -12,13 +12,11 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { SendEmailForgotPasswordDto } from '../sendEmail/dto/send-email-forgot-password.dto';
-import { User } from '../user/user.entity';
 import { InsertResult, UpdateResult } from 'typeorm';
 import { UserInsertDto } from './dto/insert-user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { CompanyService } from 'src/company/company.service';
-import { UserGetResponsetDto } from './dto/get-user-response.dto';
 import { UserCompanyService } from 'src/userCompany/userCompany.service';
 
 @Controller('user')
